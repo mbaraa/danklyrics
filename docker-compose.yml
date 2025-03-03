@@ -1,0 +1,11 @@
+services:
+  app:
+    container_name: "danklyrics"
+    build:
+      context: .
+    image: "danklyrics"
+    restart: "always"
+    ports:
+      - "20420:8080"
+    stdin_open: true
+    env_file: .env.docker

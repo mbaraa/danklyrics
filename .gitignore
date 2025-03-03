@@ -1,0 +1,10 @@
+.DS_Store
+node_modules
+.env
+.env.*
+!.env.example
+danklyrics
+views/**/*.go
+views/**/*.txt
+_*/
+tmp/
