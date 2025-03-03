@@ -139,6 +139,7 @@ main {
 #dank-lyrics-content {
   width: 100%;
   text-align: left;
+  user-select: text !important;
 }
 
 .gh {
