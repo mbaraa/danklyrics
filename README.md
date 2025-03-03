@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://danklyrics.com" target="_blank"><img src="https://danklyrics.com/static/favicon.png" width="150" /></a>
+  <a href="https://danklyrics.com" target="_blank"><img src="https://danklyrics.com/static/Ravicon.png" width="150" /></a>
 
   <h1>DankLyrics</h1>
   <p>
@@ -12,7 +12,7 @@
 
 ## About
 
-**X Straightness Checker:** Check how straight you are based on your activity on X!
+**DankLyrics:** find lyrics for songs or something.
 
 _Note: this is a fling side-project that could die anytime so don't get your hopes up._
 
