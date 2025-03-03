@@ -72,17 +72,6 @@ func getSongLyrics(s SearchInput) (string, error) {
 		return "", errors.New("no results were found")
 	}
 
-	var songUrl string
-	for _, hit := range hits {
-		if hit.Type == "song" && hit.Result != nil {
-			songUrl = hit.Result.URL
-		}
-	}
-
-	if len(songUrl) == 0 {
-		return "", errors.New("no results were found")
-	}
-
 	lyrics, err := genius.Lyrics.FindForSong(hits[0].Result.URL)
 	if err != nil {
 		return "", err
