@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: "danklyrics"
+    container_name: "danklyrics-web"
     build:
       context: .
     image: "danklyrics"

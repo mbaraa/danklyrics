@@ -1,8 +1,11 @@
 module danklyrics
 
-go 1.23.4
+go 1.24.3
 
-require github.com/mbaraa/gonius v0.0.2
+require (
+	github.com/mbaraa/gonius v0.0.2
+	github.com/mbaraa/lrclibgo v1.0.1
+)
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.1 // indirect

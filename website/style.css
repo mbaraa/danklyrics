@@ -56,7 +56,6 @@ main {
 .dank-container {
   width: 80%;
   margin: auto;
-  /* margin-top: 40px; */
 }
 
 .dank-text {
@@ -163,25 +162,52 @@ main > div h2 {
 
 .footer {
   margin: 0;
-  height: 150px;
   background-color: #3e4637;
-}
-
-p.footer {
-  font-size: 1.25rem;
   display: flex;
   justify-content: center;
   width: 100%;
   text-align: center;
 }
 
-span.footer {
+.footer-container {
   display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 8px 10px 8px;
+  color: white;
+}
+
+.flex-center-content {
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-img.footer {
-  width: 25px;
-  height: 25px;
-  margin-left: 5px;
+.github-box {
+  background-color: black;
+  padding: 8px;
+  max-height: 40px;
+}
+
+.github-img {
+  height: 24px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.text-link {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-decoration: underline;
+  color: white;
+}
+
+.icon-img {
+  display: inline-block;
+  max-height: 40px;
+}
+
+.pixelated {
+  image-rendering: pixelated;
 }

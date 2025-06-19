@@ -3,7 +3,7 @@
 
   <h1>DankLyrics</h1>
   <p>
-    <strong>A Genius and cs16.css powered lyrics finder.</strong>
+    <strong>A Genius and LyricFind powered lyrics finder with the legendary cs1.6 theme.</strong>
   </p>
   <p>
     <a href="https://github.com/mbaraa/danklyrics/actions/workflows/rex-deploy.yml"><img alt="rex-deployment" src="https://github.com/mbaraa/danklyrics/actions/workflows/rex-deploy.yml/badge.svg"/></a>
@@ -14,8 +14,7 @@
 
 **DankLyrics:** find lyrics for songs or something.
 
-_Note: this is a fling side-project that could die anytime so don't get your hopes up._
-
 ---
 
+A [DankStuff](https://dankstuff.net) product!
 Made with 🧉 by [Baraa Al-Masri](https://mbaraa.com)

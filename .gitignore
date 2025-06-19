@@ -8,3 +8,4 @@ views/**/*.go
 views/**/*.txt
 _*/
 tmp/
+Session.vim
