@@ -16,6 +16,6 @@
 
 ---
 
-A [DankStuff](https://dankstuff.net) product!
+A [DankStuff <img height="16" width="16" src="https://dankstuff.net/assets/favicon.ico" />](https://dankstuff.net) product!
 
-Made with 🧉 by [Baraa Al-Masri](https://mbaraa.com)
+Made with 🧉 by [Baraa Al-Masri](https://mbaraa.com).
