@@ -3,7 +3,7 @@ module danklyrics
 go 1.24.3
 
 require (
-	github.com/mbaraa/gonius v0.0.2
+	github.com/mbaraa/gonius v1.0.0
 	github.com/mbaraa/lrclibgo v1.0.1
 )
 

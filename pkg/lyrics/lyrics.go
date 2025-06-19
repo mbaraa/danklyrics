@@ -2,100 +2,94 @@ package lyrics
 
 import (
 	"errors"
-	"fmt"
 	"os"
+	"strings"
 
 	"github.com/mbaraa/gonius"
 	"github.com/mbaraa/lrclibgo"
 )
 
 var (
-	geniusToken = os.Getenv("GENIUS_TOKEN")
+	geniusClientId     = os.Getenv("GENIUS_CLIENT_ID")
+	geniusClientSecret = os.Getenv("GENIUS_CLIENT_SECRET")
 
-	genius *gonius.Client
-	lrclib *lrclibgo.Client
+	lyricsProviders = map[ProviderName]Provider{}
 )
 
 func init() {
-	genius = gonius.NewClient(geniusToken)
-	lrclib = lrclibgo.NewClient()
+	lyricsProviders[ProviderGenius] = &geniusProvider{
+		client: gonius.NewClient(geniusClientId, geniusClientSecret),
+	}
+	lyricsProviders[ProviderLyricFind] = &lyricFindProvider{
+		client: lrclibgo.NewClient(),
+	}
 }
 
-type SearchInput struct {
+// Lyrics holds lyrics fetched by a provider.
+type Lyrics struct {
+	parts  []string
+	synced map[string]string
+}
+
+// String returns the lyrics' lines as one single string, separated by line feed.
+func (l *Lyrics) String() string {
+	return strings.TrimSpace(strings.Join(l.parts, "\n"))
+}
+
+// Parts returns the lines of the lyrics.
+func (l *Lyrics) Parts() []string {
+	return l.parts
+}
+
+// Synced similar to [Lyrics.Parts] but instead of plain lines, it has time stamps syncs for the line.
+func (l *Lyrics) Synced() map[string]string {
+	return l.synced
+}
+
+// SearchParams holds the search criteria to find a song from a provider.
+type SearchParams struct {
 	SongName   string
 	ArtistName string
 	AlbumName  string
 }
 
-func GetSongLyrics(s SearchInput) (string, error) {
-	lyrics, err := getSongLyricsGenius(s)
+// Provider fetches lyrics for the given song in the search params.
+type Provider interface {
+	GetSongLyrics(s SearchParams) (Lyrics, error)
+}
+
+// ProviderName represents lyrics finding providers to choose from when doing a lyrics search.
+type ProviderName string
+
+const (
+	// ProviderGenius pass this to [GetSongLyrics] to use Genius as a lyrics provider.
+	ProviderGenius ProviderName = "genius"
+	// ProviderLyricFind pass this to [GetSongLyrics] to use LyricFind as a lyrics provider.
+	ProviderLyricFind ProviderName = "lrc"
+)
+
+// GetSongLyrics search for song's lyrics using the passed list of [providers]
+// where using a provider depends on the provider's order in that list.
+//
+// returns [Lyrics] and an occurring [error]
+func GetSongLyrics(s SearchParams, providers []ProviderName) (Lyrics, error) {
+	if len(providers) == 0 {
+		return Lyrics{}, errors.New("must specify at least one lyrics provider")
+	}
+
+	lyrics, err := lyricsProviders[providers[0]].GetSongLyrics(s)
 	if err != nil {
-		return getSongLyricsLyricFind(s)
+		if len(providers) <= 1 {
+			return Lyrics{}, err
+		}
+
+		for _, provider := range providers[1:] {
+			lyrics, err = lyricsProviders[provider].GetSongLyrics(s)
+			if err == nil {
+				break
+			}
+		}
 	}
 
 	return lyrics, nil
-}
-
-func getSongLyricsGenius(s SearchInput) (string, error) {
-	var hits []gonius.Hit
-	var err error
-
-	okArtist := s.ArtistName != ""
-	okAlbum := s.AlbumName != ""
-	okSong := s.SongName != ""
-
-	switch {
-	case !okArtist && !okAlbum && okSong:
-		hits, err = genius.Search.Get(s.SongName)
-		if err != nil {
-			return "", err
-		}
-	case okArtist && !okAlbum && okSong:
-		hits, err = genius.Search.Get(fmt.Sprintf("%s %s", s.SongName, s.ArtistName))
-		if err != nil {
-			return "", err
-		}
-	case !okArtist && okAlbum && okSong:
-		hits, err = genius.Search.Get(fmt.Sprintf("%s %s", s.SongName, s.AlbumName))
-		if err != nil {
-			return "", err
-		}
-	case okArtist && okAlbum && okSong:
-		hits, err = genius.Search.Get(fmt.Sprintf("%s %s %s", s.SongName, s.AlbumName, s.ArtistName))
-		if err != nil {
-			return "", err
-		}
-	}
-
-	if len(hits) == 0 {
-		return "", errors.New("no results were found")
-	}
-
-	lyrics, err := genius.Lyrics.FindForSong(hits[0].Result.URL)
-	if err != nil {
-		return "", err
-	}
-
-	return lyrics.String(), nil
-}
-
-func getSongLyricsLyricFind(s SearchInput) (string, error) {
-	lrcSearch := lrclibgo.SearchParams{
-		TrackName:  s.SongName,
-		ArtistName: s.ArtistName,
-		AlbumName:  s.AlbumName,
-		Limit:      0,
-	}
-
-	hits, err := lrclib.Search.Get(lrcSearch)
-	if err != nil {
-		return "", err
-	}
-
-	if len(hits) == 0 {
-		return "", errors.New("no results were found")
-	}
-
-	lyrics := hits[0].Lyrics()
-	return lyrics.String(), nil
 }

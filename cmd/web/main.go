@@ -50,7 +50,7 @@ func main() {
 			return
 		}
 
-		searchInput := lyrics.SearchInput{
+		searchInput := lyrics.SearchParams{
 			SongName: songName[0],
 		}
 		if okAlbum {
@@ -59,7 +59,7 @@ func main() {
 		if okArtist {
 			searchInput.ArtistName = artistName[0]
 		}
-		lyricsText, err := lyrics.GetSongLyrics(searchInput)
+		lyricsText, err := lyrics.GetSongLyrics(searchInput, []lyrics.ProviderName{lyrics.ProviderLyricFind, lyrics.ProviderGenius})
 		if err != nil {
 			log.Println("oppsie doopsie some shit happened", err)
 			w.Write([]byte("No results were found"))
@@ -67,7 +67,7 @@ func main() {
 			return
 		}
 
-		w.Write([]byte(lyricsText))
+		w.Write([]byte(lyricsText.String()))
 	})
 
 	log.Printf("Starting web server at port %s", port)
