@@ -10,12 +10,27 @@ import (
 )
 
 var (
-	port        = os.Getenv("PORT")
+	port               = os.Getenv("PORT")
+	geniusClientId     = os.Getenv("GENIUS_CLIENT_ID")
+	geniusClientSecret = os.Getenv("GENIUS_CLIENT_SECRET")
+
+	lyricser *lyrics.Finder
+
 	publicFiles embed.FS
 )
 
 func init() {
 	publicFiles = website.FS()
+
+	var err error
+	lyricser, err = lyrics.New(lyrics.FinderConfig{
+		GeniusClientId:     geniusClientId,
+		GeniusClientSecret: geniusClientSecret,
+		Providers:          []lyrics.ProviderName{lyrics.ProviderLyricFind, lyrics.ProviderGenius},
+	})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
@@ -59,7 +74,8 @@ func main() {
 		if okArtist {
 			searchInput.ArtistName = artistName[0]
 		}
-		lyricsText, err := lyrics.GetSongLyrics(searchInput, []lyrics.ProviderName{lyrics.ProviderLyricFind, lyrics.ProviderGenius})
+
+		lyricsText, err := lyricser.GetSongLyrics(searchInput)
 		if err != nil {
 			log.Println("oppsie doopsie some shit happened", err)
 			w.Write([]byte("No results were found"))
