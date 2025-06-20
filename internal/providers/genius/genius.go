@@ -1,6 +1,8 @@
-package lyrics
+package genius
 
 import (
+	"danklyrics/pkg/models"
+	"danklyrics/pkg/provider"
 	"errors"
 	"fmt"
 
@@ -11,7 +13,13 @@ type geniusProvider struct {
 	client *gonius.Client
 }
 
-func (g *geniusProvider) GetSongLyrics(s SearchParams) (Lyrics, error) {
+func New(clientId, clientSecret string) provider.Service {
+	return &geniusProvider{
+		client: gonius.NewClient(clientId, clientSecret),
+	}
+}
+
+func (g *geniusProvider) GetSongLyrics(s provider.SearchParams) (models.Lyrics, error) {
 	var hits []gonius.Hit
 	var err error
 
@@ -23,35 +31,33 @@ func (g *geniusProvider) GetSongLyrics(s SearchParams) (Lyrics, error) {
 	case !okArtist && !okAlbum && okSong:
 		hits, err = g.client.Search.Get(s.SongName)
 		if err != nil {
-			return Lyrics{}, err
+			return models.Lyrics{}, err
 		}
 	case okArtist && !okAlbum && okSong:
 		hits, err = g.client.Search.Get(fmt.Sprintf("%s %s", s.SongName, s.ArtistName))
 		if err != nil {
-			return Lyrics{}, err
+			return models.Lyrics{}, err
 		}
 	case !okArtist && okAlbum && okSong:
 		hits, err = g.client.Search.Get(fmt.Sprintf("%s %s", s.SongName, s.AlbumName))
 		if err != nil {
-			return Lyrics{}, err
+			return models.Lyrics{}, err
 		}
 	case okArtist && okAlbum && okSong:
 		hits, err = g.client.Search.Get(fmt.Sprintf("%s %s %s", s.SongName, s.AlbumName, s.ArtistName))
 		if err != nil {
-			return Lyrics{}, err
+			return models.Lyrics{}, err
 		}
 	}
 
 	if len(hits) == 0 {
-		return Lyrics{}, errors.New("no results were found")
+		return models.Lyrics{}, errors.New("no results were found")
 	}
 
 	lyrics, err := g.client.Lyrics.FindForSong(hits[0].Result.URL)
 	if err != nil {
-		return Lyrics{}, err
+		return models.Lyrics{}, err
 	}
 
-	return Lyrics{
-		parts: lyrics.Parts(),
-	}, nil
+	return models.NewLyrics(lyrics.Parts(), nil), nil
 }

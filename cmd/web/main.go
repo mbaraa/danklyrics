@@ -1,7 +1,8 @@
 package main
 
 import (
-	"danklyrics/pkg/lyrics"
+	"danklyrics/pkg/client"
+	"danklyrics/pkg/provider"
 	"danklyrics/website"
 	"embed"
 	"log"
@@ -14,7 +15,7 @@ var (
 	geniusClientId     = os.Getenv("GENIUS_CLIENT_ID")
 	geniusClientSecret = os.Getenv("GENIUS_CLIENT_SECRET")
 
-	lyricser *lyrics.Finder
+	lyricser *client.Lyricser
 
 	publicFiles embed.FS
 )
@@ -23,10 +24,10 @@ func init() {
 	publicFiles = website.FS()
 
 	var err error
-	lyricser, err = lyrics.New(lyrics.FinderConfig{
+	lyricser, err = client.New(client.LyricserConfig{
 		GeniusClientId:     geniusClientId,
 		GeniusClientSecret: geniusClientSecret,
-		Providers:          []lyrics.ProviderName{lyrics.ProviderLyricFind, lyrics.ProviderGenius},
+		Providers:          []provider.Name{provider.LyricFind, provider.Genius},
 	})
 	if err != nil {
 		panic(err)
@@ -65,7 +66,7 @@ func main() {
 			return
 		}
 
-		searchInput := lyrics.SearchParams{
+		searchInput := provider.SearchParams{
 			SongName: songName[0],
 		}
 		if okAlbum {
