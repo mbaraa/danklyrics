@@ -59,5 +59,7 @@ func (g *geniusProvider) GetSongLyrics(s provider.SearchParams) (models.Lyrics, 
 		return models.Lyrics{}, err
 	}
 
-	return models.NewLyrics(lyrics.Parts(), nil), nil
+	return models.Lyrics{
+		Parts: lyrics.Parts(),
+	}, nil
 }

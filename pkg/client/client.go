@@ -8,20 +8,23 @@ import (
 	"danklyrics/pkg/provider"
 )
 
-// Lyricser is the dank lyrics finding client that uses [finder.Service] to find lyrics using the enabled providers.
-type Lyricser struct {
+// Local is the dank lyrics finding client that uses [finder.Service] to find lyrics using the enabled providers.
+type Local struct {
 	finder *finder.Service
 }
 
-// LyricserConfig holds the configs needed to initialize [Lyricser].
-type LyricserConfig struct {
+// Config holds the configs needed to initialize [Local] or [Http] clients.
+type Config struct {
 	GeniusClientId     string
 	GeniusClientSecret string
 	Providers          []provider.Name
+	// ApiAddress only used by [Http] client, setting its value for [Local] client won't destroy the world, but it's pointless.
+	// defaults to (https://api.danklyrics.com)
+	ApiAddress string
 }
 
-// New initializes a new [Lyricser] instance with the given configs.
-func New(c LyricserConfig) (*Lyricser, error) {
+// New initializes a new [Local] instance with the given configs.
+func New(c Config) (*Local, error) {
 	providers := make([]provider.Service, 0, len(c.Providers))
 
 	for _, providerName := range c.Providers {
@@ -38,7 +41,7 @@ func New(c LyricserConfig) (*Lyricser, error) {
 		return nil, err
 	}
 
-	return &Lyricser{
+	return &Local{
 		finder: finder,
 	}, nil
 }
@@ -47,6 +50,6 @@ func New(c LyricserConfig) (*Lyricser, error) {
 // where using a provider depends on the provider's order in that list.
 //
 // returns [Lyrics] and an occurring [error]
-func (c *Lyricser) GetSongLyrics(s provider.SearchParams) (models.Lyrics, error) {
+func (c *Local) GetSongLyrics(s provider.SearchParams) (models.Lyrics, error) {
 	return c.finder.GetSongLyrics(s)
 }

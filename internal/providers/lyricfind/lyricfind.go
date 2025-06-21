@@ -36,5 +36,8 @@ func (l *lyricFindProvider) GetSongLyrics(s provider.SearchParams) (models.Lyric
 	}
 
 	lyrics := hits[0].Lyrics()
-	return models.NewLyrics(lyrics.Parts(), lyrics.Synced()), nil
+	return models.Lyrics{
+		Parts:  lyrics.Parts(),
+		Synced: lyrics.Synced(),
+	}, nil
 }

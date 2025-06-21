@@ -3,9 +3,26 @@ services:
     container_name: "danklyrics-web"
     build:
       context: .
-    image: "danklyrics"
     restart: "always"
     ports:
       - "20420:8080"
     stdin_open: true
     env_file: .env.docker
+    networks:
+      - danklyricsnetwork
+
+  api:
+    container_name: "danklyrics-api"
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: "always"
+    ports:
+      - "20421:8081"
+    stdin_open: true
+    env_file: .env.docker
+    networks:
+      - danklyricsnetwork
+
+networks:
+  danklyricsnetwork: {}

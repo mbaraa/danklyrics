@@ -1,0 +1,16 @@
+FROM golang:1.24-alpine AS build
+
+WORKDIR /app
+COPY . .
+
+RUN go mod tidy && \
+    go build -ldflags="-w -s" -o danklyrics-api ./cmd/api/main.go
+
+FROM alpine:latest AS run
+
+WORKDIR /app
+COPY --from=build /app/danklyrics-api .
+
+EXPOSE 8081
+
+CMD ["./danklyrics-api"]

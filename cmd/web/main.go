@@ -12,10 +12,11 @@ import (
 
 var (
 	port               = os.Getenv("PORT")
+	apiAddress         = os.Getenv("API_ADDRESS")
 	geniusClientId     = os.Getenv("GENIUS_CLIENT_ID")
 	geniusClientSecret = os.Getenv("GENIUS_CLIENT_SECRET")
 
-	lyricser *client.Lyricser
+	lyricser *client.Http
 
 	publicFiles embed.FS
 )
@@ -24,10 +25,11 @@ func init() {
 	publicFiles = website.FS()
 
 	var err error
-	lyricser, err = client.New(client.LyricserConfig{
+	lyricser, err = client.NewHttp(client.Config{
 		GeniusClientId:     geniusClientId,
 		GeniusClientSecret: geniusClientSecret,
 		Providers:          []provider.Name{provider.LyricFind, provider.Genius},
+		ApiAddress:         apiAddress,
 	})
 	if err != nil {
 		panic(err)
@@ -79,8 +81,8 @@ func main() {
 		lyricsText, err := lyricser.GetSongLyrics(searchInput)
 		if err != nil {
 			log.Println("oppsie doopsie some shit happened", err)
-			w.Write([]byte("No results were found"))
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("No results were found"))
 			return
 		}
 
