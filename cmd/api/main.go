@@ -163,7 +163,7 @@ func handleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	if len(lyricses) == 0 && len(lyrics.Parts) > 0 {
+	if len(lyricses) != 0 && len(lyrics.Parts) > 0 {
 		_, _ = usecases.CreateLyrics(lyrics)
 	}
 

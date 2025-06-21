@@ -1,13 +1,14 @@
 package main
 
 import (
+	"embed"
+	"log"
+	"net/http"
+
 	"github.com/mbaraa/danklyrics/internal/config"
 	"github.com/mbaraa/danklyrics/pkg/client"
 	"github.com/mbaraa/danklyrics/pkg/provider"
 	"github.com/mbaraa/danklyrics/website"
-	"embed"
-	"log"
-	"net/http"
 )
 
 var (
@@ -23,7 +24,7 @@ func init() {
 	lyricser, err = client.NewHttp(client.Config{
 		GeniusClientId:     config.Env().GeniusClientId,
 		GeniusClientSecret: config.Env().GeniusClientSecret,
-		Providers:          []provider.Name{provider.LyricFind, provider.Genius},
+		Providers:          []provider.Name{provider.Dank, provider.LyricFind, provider.Genius},
 		ApiAddress:         config.Env().ApiAddress,
 	})
 	if err != nil {
