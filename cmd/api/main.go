@@ -1,12 +1,12 @@
 package main
 
 import (
-	"danklyrics/internal/actions"
-	"danklyrics/internal/config"
-	"danklyrics/internal/mariadb"
-	"danklyrics/pkg/client"
-	"danklyrics/pkg/models"
-	"danklyrics/pkg/provider"
+	"github.com/mbaraa/danklyrics/internal/actions"
+	"github.com/mbaraa/danklyrics/internal/config"
+	"github.com/mbaraa/danklyrics/internal/mariadb"
+	"github.com/mbaraa/danklyrics/pkg/client"
+	"github.com/mbaraa/danklyrics/pkg/models"
+	"github.com/mbaraa/danklyrics/pkg/provider"
 	"encoding/json"
 	"log"
 	"net/http"

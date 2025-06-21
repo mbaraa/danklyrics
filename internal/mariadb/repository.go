@@ -1,7 +1,7 @@
 package mariadb
 
 import (
-	"danklyrics/internal/models"
+	"github.com/mbaraa/danklyrics/internal/models"
 
 	"gorm.io/gorm"
 )

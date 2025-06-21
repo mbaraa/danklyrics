@@ -1,8 +1,8 @@
 package lyricfind
 
 import (
-	"danklyrics/pkg/models"
-	"danklyrics/pkg/provider"
+	"github.com/mbaraa/danklyrics/pkg/models"
+	"github.com/mbaraa/danklyrics/pkg/provider"
 	"errors"
 
 	"github.com/mbaraa/lrclibgo"

@@ -1,8 +1,8 @@
 package actions
 
 import (
-	intmodels "danklyrics/internal/models"
-	"danklyrics/pkg/models"
+	intmodels "github.com/mbaraa/danklyrics/internal/models"
+	"github.com/mbaraa/danklyrics/pkg/models"
 	"errors"
 )
 

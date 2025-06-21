@@ -1,10 +1,10 @@
 package main
 
 import (
-	"danklyrics/internal/config"
-	"danklyrics/pkg/client"
-	"danklyrics/pkg/provider"
-	"danklyrics/website"
+	"github.com/mbaraa/danklyrics/internal/config"
+	"github.com/mbaraa/danklyrics/pkg/client"
+	"github.com/mbaraa/danklyrics/pkg/provider"
+	"github.com/mbaraa/danklyrics/website"
 	"embed"
 	"log"
 	"net/http"

@@ -1,12 +1,12 @@
 package client
 
 import (
-	"danklyrics/internal/providers/dank"
-	"danklyrics/internal/providers/genius"
-	"danklyrics/internal/providers/lyricfind"
-	"danklyrics/pkg/finder"
-	"danklyrics/pkg/models"
-	"danklyrics/pkg/provider"
+	"github.com/mbaraa/danklyrics/internal/providers/dank"
+	"github.com/mbaraa/danklyrics/internal/providers/genius"
+	"github.com/mbaraa/danklyrics/internal/providers/lyricfind"
+	"github.com/mbaraa/danklyrics/pkg/finder"
+	"github.com/mbaraa/danklyrics/pkg/models"
+	"github.com/mbaraa/danklyrics/pkg/provider"
 )
 
 // Local is the dank lyrics finding client that uses [finder.Service] to find lyrics using the enabled providers.

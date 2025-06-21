@@ -1,6 +1,6 @@
 package provider
 
-import "danklyrics/pkg/models"
+import "github.com/mbaraa/danklyrics/pkg/models"
 
 // SearchParams holds the search criteria to find a song from a provider.
 type SearchParams struct {

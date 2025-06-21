@@ -1,6 +1,6 @@
 package actions
 
-import "danklyrics/internal/models"
+import "github.com/mbaraa/danklyrics/internal/models"
 
 type Repository interface {
 	CreateLyrics(l models.Lyrics) (models.Lyrics, error)
