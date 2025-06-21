@@ -3,7 +3,7 @@
 
   <h1>DankLyrics</h1>
   <p>
-    <strong>A Genius and LyricFind powered lyrics finder with the legendary cs1.6 theme.</strong>
+    <strong>A lyrics finder with the legendary cs1.6 theme.</strong>
   </p>
   <p>
     <a href="https://goreportcard.com/report/github.com/mbaraa/danklyrics"><img alt="rex-deployment" src="https://goreportcard.com/badge/github.com/mbaraa/danklyrics"/></a>
