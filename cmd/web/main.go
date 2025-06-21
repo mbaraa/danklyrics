@@ -1,21 +1,16 @@
 package main
 
 import (
+	"danklyrics/internal/config"
 	"danklyrics/pkg/client"
 	"danklyrics/pkg/provider"
 	"danklyrics/website"
 	"embed"
 	"log"
 	"net/http"
-	"os"
 )
 
 var (
-	port               = os.Getenv("PORT")
-	apiAddress         = os.Getenv("API_ADDRESS")
-	geniusClientId     = os.Getenv("GENIUS_CLIENT_ID")
-	geniusClientSecret = os.Getenv("GENIUS_CLIENT_SECRET")
-
 	lyricser *client.Http
 
 	publicFiles embed.FS
@@ -26,10 +21,10 @@ func init() {
 
 	var err error
 	lyricser, err = client.NewHttp(client.Config{
-		GeniusClientId:     geniusClientId,
-		GeniusClientSecret: geniusClientSecret,
+		GeniusClientId:     config.Env().GeniusClientId,
+		GeniusClientSecret: config.Env().GeniusClientSecret,
 		Providers:          []provider.Name{provider.LyricFind, provider.Genius},
-		ApiAddress:         apiAddress,
+		ApiAddress:         config.Env().ApiAddress,
 	})
 	if err != nil {
 		panic(err)
@@ -89,6 +84,6 @@ func main() {
 		w.Write([]byte(lyricsText.String()))
 	})
 
-	log.Printf("Starting web server at port %s", port)
-	log.Fatalln(http.ListenAndServe(":"+port, nil))
+	log.Printf("Starting web server at port %s", config.Env().Port)
+	log.Fatalln(http.ListenAndServe(":"+config.Env().Port, nil))
 }
