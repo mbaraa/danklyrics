@@ -1,16 +1,17 @@
 package main
 
 import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"slices"
+
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/config"
 	"github.com/mbaraa/danklyrics/internal/mariadb"
 	"github.com/mbaraa/danklyrics/pkg/client"
 	"github.com/mbaraa/danklyrics/pkg/models"
 	"github.com/mbaraa/danklyrics/pkg/provider"
-	"encoding/json"
-	"log"
-	"net/http"
-	"slices"
 )
 
 const docsLink = "https://github.com/mbaraa/danklyrics"
@@ -130,14 +131,8 @@ func handleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = usecases.CreateLyrics(lyrics)
-	if err != nil {
-		log.Println("oppsie doopsie some shit happened", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(errorResponse{
-			Message: "No results were found",
-		})
-		return
+	if _, err := usecases.GetLyricsBySongTitleArtistNameAndAlbumTitle(songName[0], artistName[0], albumName[0]); err == nil {
+		_, _ = usecases.CreateLyrics(lyrics)
 	}
 
 	_ = json.NewEncoder(w).Encode(lyrics)
