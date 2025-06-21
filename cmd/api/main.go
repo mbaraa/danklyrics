@@ -1,20 +1,37 @@
 package main
 
 import (
+	"danklyrics/internal/actions"
+	"danklyrics/internal/config"
+	"danklyrics/internal/mariadb"
 	"danklyrics/pkg/client"
+	"danklyrics/pkg/models"
 	"danklyrics/pkg/provider"
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
 	"slices"
 )
 
 const docsLink = "https://github.com/mbaraa/danklyrics"
 
 var (
-	port = os.Getenv("API_PORT")
+	usecases *actions.Actions
 )
+
+func init() {
+	repo, err := mariadb.New()
+	if err != nil {
+		panic(err)
+	}
+
+	err = mariadb.Migrate()
+	if err != nil {
+		panic(err)
+	}
+
+	usecases = actions.New(repo)
+}
 
 type errorResponse struct {
 	Message         string `json:"message"`
@@ -113,14 +130,96 @@ func handleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err = usecases.CreateLyrics(lyrics)
+	if err != nil {
+		log.Println("oppsie doopsie some shit happened", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(errorResponse{
+			Message: "No results were found",
+		})
+		return
+	}
+
 	_ = json.NewEncoder(w).Encode(lyrics)
+}
+
+func handleGetSongDankLyrics(w http.ResponseWriter, r *http.Request) {
+	artistName, okArtist := r.URL.Query()["artist"]
+	albumName, okAlbum := r.URL.Query()["album"]
+	songName, okSong := r.URL.Query()["song"]
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if !okArtist && !okAlbum && !okSong {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errorResponse{
+			Message:  "Missing all query parameters `artist`, `album` and `song`",
+			DocsLink: docsLink,
+		})
+		return
+	}
+
+	if !okSong {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errorResponse{
+			Message:  "Missing required query parameter `song`",
+			DocsLink: docsLink,
+		})
+		return
+	}
+
+	var lyricses []models.Lyrics
+	var err error
+
+	switch {
+	case !okArtist && !okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitle(songName[0])
+		if err != nil {
+			break
+		}
+	case okArtist && !okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitleAndArtistName(songName[0], artistName[0])
+		if err != nil {
+			break
+		}
+	case !okArtist && okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitleAndArtistName(songName[0], albumName[0])
+		if err != nil {
+			break
+		}
+	case okArtist && okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitleArtistNameAndAlbumTitle(songName[0], artistName[0], albumName[0])
+		if err != nil {
+			break
+		}
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(errorResponse{
+			Message:         "Something went wrong",
+			SuggestedAction: "Check the docs, or contact admin (baraa@dankstuff.net)",
+			DocsLink:        docsLink,
+		})
+		return
+	}
+
+	if len(lyricses) == 0 {
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(errorResponse{
+			Message: "No results were found",
+		})
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(lyricses)
 }
 
 func main() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("GET /providers", handleListProviders)
 	http.HandleFunc("GET /lyrics", handleGetSongLyrics)
+	http.HandleFunc("GET /dank/lyrics", handleGetSongDankLyrics)
 
-	log.Printf("Starting web server at port %s", port)
-	log.Fatalln(http.ListenAndServe(":"+port, nil))
+	log.Printf("Starting web server at port %s", config.Env().ApiPort)
+	log.Fatalln(http.ListenAndServe(":"+config.Env().ApiPort, nil))
 }

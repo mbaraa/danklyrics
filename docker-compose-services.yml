@@ -1,0 +1,31 @@
+services:
+  db:
+    container_name: "danklyrics-db"
+    image: "mariadb:11.7"
+    restart: "always"
+    ports:
+      - "3306:3306"
+    stdin_open: true
+    environment:
+      MARIADB_ROOT_PASSWORD: "previetcomrade"
+      MARIADB_DATABASE: "danklyricsdb"
+    env_file:
+      - .env.docker
+    volumes:
+      - dank-db-config:/etc/mysql
+      - dank-db-data:/var/lib/mysql
+
+volumes:
+  dank-db-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./.db/etc
+
+  dank-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./.db/var

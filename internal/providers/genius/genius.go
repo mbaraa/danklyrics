@@ -5,6 +5,7 @@ import (
 	"danklyrics/pkg/provider"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/mbaraa/gonius"
 )
@@ -54,12 +55,29 @@ func (g *geniusProvider) GetSongLyrics(s provider.SearchParams) (models.Lyrics, 
 		return models.Lyrics{}, errors.New("no results were found")
 	}
 
+	song, err := g.client.Songs.Get(strconv.Itoa(hits[0].Result.Id))
+	if err != nil {
+		return models.Lyrics{}, err
+	}
+
 	lyrics, err := g.client.Lyrics.FindForSong(hits[0].Result.URL)
 	if err != nil {
 		return models.Lyrics{}, err
 	}
 
+	artistName := ""
+	if song.PrimaryArtist != nil {
+		artistName = song.PrimaryArtist.Name
+	}
+	albumTitle := ""
+	if song.Album != nil {
+		albumTitle = song.Album.FullTitle
+	}
+
 	return models.Lyrics{
-		Parts: lyrics.Parts(),
+		SongName:   song.Title,
+		ArtistName: artistName,
+		AlbumName:  albumTitle,
+		Parts:      lyrics.Parts(),
 	}, nil
 }

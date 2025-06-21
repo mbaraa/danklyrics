@@ -16,6 +16,8 @@
 
 # REST API Docs
 
+_Rest API is available at [api.danklyrics.com](https://api.danklyrics.com)_
+
 - **`GET /`**: displays this message.
 
 ```

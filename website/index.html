@@ -30,50 +30,158 @@
     <main>
       <section class="dank-container">
         <div class="dank-form-container">
-          <h3 class="dank-form-title">Find ze lyrics</h3>
-          <form action="#" id="dank-form" class="dank-form">
+          <div class="cs-tabs">
             <input
-              class="cs-input dank-song-name"
-              id="songName"
-              type="input"
-              placeholder="Song name"
+              class="radiotab"
+              name="tabs"
+              tabindex="1"
+              type="radio"
+              id="tabone"
+              checked="checked"
             />
-            <div class="artist-album-container">
-              <input
-                class="cs-input dank-artist-name"
-                id="artistName"
-                type="input"
-                placeholder="Artist name (optional)"
-              />
-              <input
-                class="cs-input dank-album-name"
-                id="albumName"
-                type="input"
-                placeholder="Album name (optional)"
-              />
-            </div>
+            <label class="label" for="tabone">Find Lyrics</label>
+            <div class="panel" tabindex="1">
+              <h2 class="dank-form-title">Find ze lyrics</h2>
+              <form action="#" id="dank-form" class="dank-form">
+                <input
+                  class="cs-input dank-song-name"
+                  id="songName"
+                  type="input"
+                  placeholder="Song name"
+                />
+                <div class="artist-album-container">
+                  <input
+                    class="cs-input dank-artist-name"
+                    id="artistName"
+                    type="input"
+                    placeholder="Artist name (optional)"
+                  />
+                  <input
+                    class="cs-input dank-album-name"
+                    id="albumName"
+                    type="input"
+                    placeholder="Album name (optional)"
+                  />
+                </div>
 
-            <input class="cs-btn dank-form-button" type="submit" value="Find" />
+                <input
+                  class="cs-btn dank-form-button"
+                  type="submit"
+                  value="Find"
+                />
 
-            <div class="cs-tabs">
-              <input
-                class="radiotab"
-                name="tabs"
-                type="radio"
-                id="lyrics-tab"
-                checked="checked"
-              />
-              <label
-                class="label"
-                for="lyrics-tab"
-                class="dank-lyrics-content-tab"
-                >Lyrics</label
-              >
-              <div class="panel">
-                <p id="dank-lyrics-content">Such empty...</p>
-              </div>
+                <div class="cs-tabs">
+                  <input
+                    class="radiotab"
+                    name="tabs"
+                    type="radio"
+                    id="lyrics-tab"
+                    checked="checked"
+                  />
+                  <label
+                    class="label"
+                    for="lyrics-tab"
+                    class="dank-lyrics-content-tab"
+                    >Lyrics</label
+                  >
+                  <div class="panel">
+                    <p id="dank-lyrics-content">Such empty...</p>
+                  </div>
+
+                  <input
+                    class="radiotab"
+                    tabindex="1"
+                    name="tabs"
+                    type="radio"
+                    id="api-tab"
+                  />
+                  <label class="label" for="api-tab">API</label>
+                  <div class="panel" tabindex="1">
+                    <h2>API Endpoint for this search</h2>
+                    <p>
+                      API docs
+                      <a
+                        target="_blank"
+                        href="https://github.com/mbaraa/danklyrics"
+                        >here</a
+                      >.
+                    </p>
+                    <div id="api-endpoint">Make a search first, lol.</div>
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
+            <input
+              class="radiotab"
+              tabindex="1"
+              name="tabs"
+              type="radio"
+              id="tabtwo"
+            />
+            <label class="label" for="tabtwo">Submit lyrics</label>
+            <div class="panel" tabindex="1">
+              <h2 class="dank-form-title">Submit lyrics for a song.</h2>
+              <p>Coming soon...</p>
+            </div>
+            <input
+              class="radiotab"
+              tabindex="1"
+              name="tabs"
+              type="radio"
+              id="tabthree"
+            />
+            <label class="label" for="tabthree">About</label>
+            <div class="panel" tabindex="1">
+              <h2 class="dank-form-title">What are you looking at?.</h2>
+              <p>
+                DankLyrics is a lyrics finding website, API, and Go package.
+              </p>
+              <p>
+                <i> What you see is what you get. </i>
+              </p>
+              <p>
+                My main intention here was to create a lyrics service for
+                <a target="_blank" href="https://dankmuzikk.com">DankMuzikk</a>,
+                so initially I made this to test my Genius Go client
+                <a target="_blank" href="https://github.com/mbaraa/gonius"
+                  >Gonius</a
+                >
+                and let the site public just to embrace
+                <a target="_blank" href="https://cs16.samke.me/">CS1.6.css</a>,
+                then Genius added a bot protection thingy, so scrapping for
+                lyrics wasn't possible anymore, I found
+                <a target="_blank" href="https://www.lyricfind.com/"
+                  >LyricFind</a
+                >
+                which was promising, but then I didn't know when will they go
+                houdini like Genius, and I was like "I should have my own lyrics
+                service instead of releing on providers", Ironically enough,
+                DankLyrics still relies on providers to seed the data :), But
+                soon enough (hopefully) DankLyrics will have a shitload of
+                lyrics, and even more hopefully for it to be from the community
+                submissions.
+              </p>
+              <p>
+                So here you have it, DankLyrics in flesh and bone, no trackers
+                no nothing, and it's open source (check the footer), hoping to
+                have an amazing lyrics provider.
+              </p>
+              <p>
+                And for the record, every API call made to
+                <a target="_blank" href="https://api.danklyrics.com/lyrics"
+                  >api.danklyrics.com/lyrics</a
+                >
+                adds the found lyrics to DankLyrics' database, so every search
+                here, or when fetching lyrics for a song in DankMuzikk grows the
+                database even further. And if you're bothered by this feel free
+                to use the Go package to skip the "growning the database part",
+                but again even tho it grows with the search, I have no idea who
+                did the search, you can check the source code to make sure that
+                DankLyrics doesn't snoop around your data, And I would really
+                appreciate it if you help me have more lyrics for DankLyrics.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </main>

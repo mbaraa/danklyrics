@@ -9,3 +9,4 @@ views/**/*.txt
 _*/
 tmp/
 Session.vim
+.db

@@ -1,6 +1,7 @@
 package client
 
 import (
+	"danklyrics/internal/providers/dank"
 	"danklyrics/internal/providers/genius"
 	"danklyrics/internal/providers/lyricfind"
 	"danklyrics/pkg/finder"
@@ -33,6 +34,8 @@ func New(c Config) (*Local, error) {
 			providers = append(providers, genius.New(c.GeniusClientId, c.GeniusClientSecret))
 		case provider.LyricFind:
 			providers = append(providers, lyricfind.New())
+		case provider.Dank:
+			providers = append(providers, dank.New())
 		}
 	}
 
