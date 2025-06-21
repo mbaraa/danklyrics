@@ -131,7 +131,39 @@ func handleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := usecases.GetLyricsBySongTitleArtistNameAndAlbumTitle(songName[0], artistName[0], albumName[0]); err == nil {
+	var lyricses []models.Lyrics
+	switch {
+	case !okArtist && !okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitle(songName[0])
+		if err != nil {
+			break
+		}
+	case okArtist && !okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitleAndArtistName(songName[0], artistName[0])
+		if err != nil {
+			break
+		}
+	case !okArtist && okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitleAndArtistName(songName[0], albumName[0])
+		if err != nil {
+			break
+		}
+	case okArtist && okAlbum && okSong:
+		lyricses, err = usecases.GetLyricsBySongTitleArtistNameAndAlbumTitle(songName[0], artistName[0], albumName[0])
+		if err != nil {
+			break
+		}
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(errorResponse{
+			Message:         "Something went wrong",
+			SuggestedAction: "Check the docs, or contact admin (baraa@dankstuff.net)",
+			DocsLink:        docsLink,
+		})
+		return
+	}
+	if len(lyricses) == 0 && len(lyrics.Parts) > 0 {
 		_, _ = usecases.CreateLyrics(lyrics)
 	}
 
