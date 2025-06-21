@@ -6,12 +6,11 @@
     <strong>A Genius and LyricFind powered lyrics finder with the legendary cs1.6 theme.</strong>
   </p>
   <p>
+    <a href="https://goreportcard.com/report/github.com/mbaraa/danklyrics"><img alt="rex-deployment" src="https://goreportcard.com/badge/github.com/mbaraa/danklyrics"/></a>
+    <a href="https://godoc.org/github.com/mbaraa/danklyrics"><img alt="rex-deployment" src="https://godoc.org/github.com/mbaraa/danklyrics?status.png"/></a>
     <a href="https://github.com/mbaraa/danklyrics/actions/workflows/rex-deploy.yml"><img alt="rex-deployment" src="https://github.com/mbaraa/danklyrics/actions/workflows/rex-deploy.yml/badge.svg"/></a>
   </p>
 </div>
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/mbaraa/danklyrics)](https://goreportcard.com/report/github.com/mbaraa/danklyrics)
-[![GoDoc](https://godoc.org/github.com/mbaraa/danklyrics?status.png)](https://godoc.org/github.com/mbaraa/danklyrics)
 
 ## About
 
