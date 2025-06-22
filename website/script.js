@@ -116,7 +116,7 @@ async function handleSubmitLyricsFormSubmission(e) {
   const dankFormData = new LyricsFormData(lyricsForm);
 
   const intervalId = setInterval(() => {
-    authOutput.innerText =
+    lyricsSubmitOutput.innerText =
       loadingMsgs[Math.floor(Math.random() * loadingMsgs.length)] + "...";
   }, 1200);
 
@@ -126,15 +126,15 @@ async function handleSubmitLyricsFormSubmission(e) {
   })
     .then((resp) => {
       if (!resp.ok) {
-        authOutput.innerText = "Something went wrong";
+        lyricsSubmitOutput.innerText = "Something went wrong";
         alert("Something went wrong");
       }
       clearInterval(intervalId);
-      authOutput.innerText =
+      lyricsSubmitOutput.innerText =
         "Done, you'll receive an email when the lyrics is approved!";
     })
     .catch((err) => {
-      authOutput.innerText = `Something went wrong, ${err}`;
+      lyricsSubmitOutput.innerText = `Something went wrong, ${err}`;
       clearInterval(intervalId);
     });
 }
