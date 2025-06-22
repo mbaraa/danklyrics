@@ -1,25 +1,11 @@
 package actions
 
 import (
+	"errors"
+
 	intmodels "github.com/mbaraa/danklyrics/internal/models"
 	"github.com/mbaraa/danklyrics/pkg/models"
-	"errors"
 )
-
-func (a *Actions) GetLyricsById(id uint) (models.Lyrics, error) {
-	intLyrics, err := a.repo.GetLyricsById(id)
-	if err != nil {
-		return models.Lyrics{}, err
-	}
-
-	return models.Lyrics{
-		SongName:   intLyrics.SongTitle,
-		ArtistName: intLyrics.ArtistName,
-		AlbumName:  intLyrics.AlbumTitle,
-		Parts:      intLyrics.LyricsPlain,
-		Synced:     intLyrics.LyricsSynced,
-	}, nil
-}
 
 func (a *Actions) GetLyricsBySongTitle(title string) ([]models.Lyrics, error) {
 	intLyricses, err := a.repo.GetLyricsBySongTitle(title)
@@ -121,3 +107,44 @@ func (a *Actions) CreateLyrics(l models.Lyrics) (models.Lyrics, error) {
 
 	return models.Lyrics{}, nil
 }
+
+func (a *Actions) CreateLyricsRequest(token string, l models.Lyrics) error {
+	err := a.jwt.Validate(token, JwtSessionToken)
+	if err != nil {
+		return err
+	}
+
+	if l.SongName == "" {
+		return errors.New("missing song name")
+	}
+
+	intLyrics := intmodels.LyricsRequest{
+		SongTitle:    l.SongName,
+		ArtistName:   l.ArtistName,
+		AlbumTitle:   l.AlbumName,
+		LyricsPlain:  l.Parts,
+		LyricsSynced: l.Synced,
+	}
+
+	_, err = a.repo.CreateLyricsRequest(intLyrics)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// func (a *Actions) GetLyricsRequestById(id uint) (models.Lyrics, error) {
+// 	intLyrics, err := a.repo.GetLyricsRequestById(id)
+// 	if err != nil {
+// 		return models.Lyrics{}, err
+// 	}
+//
+// 	return models.Lyrics{
+// 		SongName:   intLyrics.SongTitle,
+// 		ArtistName: intLyrics.ArtistName,
+// 		AlbumName:  intLyrics.AlbumTitle,
+// 		Parts:      intLyrics.LyricsPlain,
+// 		Synced:     intLyrics.LyricsSynced,
+// 	}, nil
+// }

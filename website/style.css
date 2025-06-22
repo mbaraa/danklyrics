@@ -131,6 +131,7 @@ main {
 
 .dank-song-name {
   padding: 10px;
+  width: 100%;
 }
 
 .dank-album-name {
@@ -143,6 +144,16 @@ main {
   width: 100%;
 }
 
+.dank-lyrics {
+  padding: 10px;
+  width: 100%;
+  resize: none;
+}
+
+.dank-email {
+  padding: 10px;
+  width: 100%;
+}
 .dank-lyrics-content-tab {
   width: 100%;
   text-align: center;

@@ -9,8 +9,22 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/gh/ekmas/cs16.css@main/css/cs16.min.css"
     />
-    <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
     <link rel="stylesheet" href="/static/style.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/static/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/static/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="DankLyrics" />
+    <link rel="manifest" href="/static/site.webmanifest" />
     <meta name="description" content="Find lyrics for a song" />
     <meta name="og:description" content="Find lyrics for a song" />
     <meta name="og:title" content="DankLyrics" />
@@ -46,20 +60,21 @@
                 <input
                   class="cs-input dank-song-name"
                   id="songName"
-                  type="input"
+                  type="text"
+                  required
                   placeholder="Song name"
                 />
                 <div class="artist-album-container">
                   <input
                     class="cs-input dank-artist-name"
                     id="artistName"
-                    type="input"
+                    type="text"
                     placeholder="Artist name (optional)"
                   />
                   <input
                     class="cs-input dank-album-name"
                     id="albumName"
-                    type="input"
+                    type="text"
                     placeholder="Album name (optional)"
                   />
                 </div>
@@ -121,7 +136,83 @@
             <label class="label" for="tabtwo">Submit lyrics</label>
             <div class="panel tab-panel" tabindex="1">
               <h2 class="dank-form-title">Submit lyrics for a song.</h2>
-              <p>Coming soon...</p>
+
+              <div id="dank-submit-form-container">
+                <form action="#" id="dank-submit-auth-form" class="dank-form">
+                  <input
+                    class="cs-input dank-email"
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    required
+                  />
+                  <span
+                    ><i
+                      >Email is needed for spam protection (I have a smol
+                      server)</i
+                    >
+                    <br />
+                    <i>Your email is not stored anywhere!</i>
+                  </span>
+
+                  <input
+                    class="cs-btn dank-form-button"
+                    type="submit"
+                    value="Authenticate"
+                  />
+
+                  <div id="dank-lyrics-auth-content"></div>
+                </form>
+              </div>
+
+              <form
+                action="#"
+                id="dank-submit-form"
+                style="display: none"
+                class="dank-form"
+              >
+                <div class="artist-album-container">
+                  <input
+                    class="cs-input dank-song-name"
+                    id="songName"
+                    type="text"
+                    placeholder="Song name"
+                    required
+                  />
+                  <input
+                    class="cs-input dank-artist-name"
+                    id="artistName"
+                    type="text"
+                    placeholder="Artist name"
+                    required
+                  />
+                  <input
+                    class="cs-input dank-album-name"
+                    id="albumName"
+                    type="text"
+                    placeholder="Album name"
+                    required
+                  />
+                </div>
+                <textarea
+                  class="cs-input dank-lyrics"
+                  id="lyrics"
+                  type="input"
+                  rows="20"
+                  placeholder="Lyrics :0"
+                  required
+                ></textarea>
+
+                <input
+                  class="cs-btn dank-form-button"
+                  type="submit"
+                  value="Submit"
+                />
+
+                <p id="dank-lyrics-submit-content" style="user-select: text">
+                  ...
+                </p>
+              </form>
             </div>
             <input
               class="radiotab"
@@ -210,14 +301,6 @@
             src="https://dankstuff.net/assets/dank-imgs/builtwithgo.png"
             alt="Built with Go!"
             title="Built with Go!"
-          />
-        </a>
-        <a href="https://htmx.org" target="_blank">
-          <img
-            class="icon-img pixelated"
-            src="https://dankstuff.net/assets/dank-imgs/builtwithhtmx.webp"
-            alt="Built with HTMX!"
-            title="Built with HTMX!"
           />
         </a>
         <a href="https://dankstuff.net" target="_blank">

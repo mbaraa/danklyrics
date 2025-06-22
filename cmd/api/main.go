@@ -7,6 +7,8 @@ import (
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/config"
 	"github.com/mbaraa/danklyrics/internal/handlers"
+	"github.com/mbaraa/danklyrics/internal/jwt"
+	"github.com/mbaraa/danklyrics/internal/mailer"
 	"github.com/mbaraa/danklyrics/internal/mariadb"
 )
 
@@ -25,7 +27,9 @@ func init() {
 		panic(err)
 	}
 
-	usecases = actions.New(repo)
+	mailUtil := mailer.New()
+	jwtUtil := jwt.New[actions.TokenPayload]()
+	usecases = actions.New(repo, mailUtil, jwtUtil)
 }
 
 func main() {
@@ -33,11 +37,15 @@ func main() {
 
 	lyricsApi := handlers.NewLyricsFinderApi(usecases)
 	dankLyricsApi := handlers.NewDankLyricsApi(usecases)
+	authApi := handlers.NewAuthApi(usecases)
 
 	apiHandler.HandleFunc("/", lyricsApi.HandleIndex)
 	apiHandler.HandleFunc("GET /providers", lyricsApi.HandleListProviders)
 	apiHandler.HandleFunc("GET /lyrics", lyricsApi.HandleGetSongLyrics)
+	apiHandler.HandleFunc("POST /lyrics", lyricsApi.HandleSubmitSongLyrics)
 	apiHandler.HandleFunc("GET /dank/lyrics", dankLyricsApi.HandleGetSongLyrics)
+	apiHandler.HandleFunc("POST /auth", authApi.HandleAuth)
+	apiHandler.HandleFunc("POST /auth/confirm", authApi.HandleConfirmAuth)
 
 	log.Printf("Starting web server at port %s", config.Env().ApiPort)
 	log.Fatalln(http.ListenAndServe(":"+config.Env().ApiPort, apiHandler))

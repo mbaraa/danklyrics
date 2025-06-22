@@ -1,8 +1,9 @@
 package mariadb
 
 import (
-	"github.com/mbaraa/danklyrics/internal/models"
 	"fmt"
+
+	"github.com/mbaraa/danklyrics/internal/models"
 )
 
 func Migrate() error {
@@ -15,6 +16,9 @@ func Migrate() error {
 		new(models.Lyrics),
 		new(models.LyricsPart),
 		new(models.LyricsSyncedPart),
+		new(models.LyricsRequest),
+		new(models.LyricsRequestPart),
+		new(models.LyricsRequestSyncedPart),
 	)
 	if err != nil {
 		return err
@@ -22,6 +26,7 @@ func Migrate() error {
 
 	for _, tableName := range []string{
 		"lyrics", "lyrics_parts", "lyrics_synced_parts",
+		"lyrics_requests", "lyrics_request_parts", "lyrics_request_synced_parts",
 	} {
 		err = dbConn.Exec("ALTER TABLE " + tableName + " CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci").Error
 		if err != nil {

@@ -35,22 +35,6 @@ func (r *repository) CreateLyrics(lyrics models.Lyrics) (models.Lyrics, error) {
 	return lyrics, nil
 }
 
-func (r *repository) GetLyricsById(id uint) (models.Lyrics, error) {
-	var lyrics models.Lyrics
-
-	err := tryWrapDbError(
-		r.client.
-			Model(new(models.Lyrics)).
-			First(&lyrics, "id = ?", id).
-			Error,
-	)
-	if err != nil {
-		return models.Lyrics{}, err
-	}
-
-	return lyrics, nil
-}
-
 func (r *repository) GetLyricsBySongTitle(title string) ([]models.Lyrics, error) {
 	lyricses := make([]models.Lyrics, 0)
 
@@ -113,4 +97,34 @@ func (r *repository) GetLyricsBySongTitleArtistNameAndAlbumTitle(songTitle, arti
 	}
 
 	return lyricses, nil
+}
+
+func (r *repository) CreateLyricsRequest(l models.LyricsRequest) (models.LyricsRequest, error) {
+	err := tryWrapDbError(
+		r.client.
+			Model(new(models.LyricsRequest)).
+			Create(&l).
+			Error,
+	)
+	if err != nil {
+		return models.LyricsRequest{}, err
+	}
+
+	return l, nil
+}
+
+func (r *repository) GetLyricsRequestById(id uint) (models.LyricsRequest, error) {
+	var lyrics models.LyricsRequest
+
+	err := tryWrapDbError(
+		r.client.
+			Model(new(models.LyricsRequest)).
+			First(&lyrics, "id = ?", id).
+			Error,
+	)
+	if err != nil {
+		return models.LyricsRequest{}, err
+	}
+
+	return lyrics, nil
 }
