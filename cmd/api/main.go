@@ -42,7 +42,7 @@ func main() {
 	apiHandler.HandleFunc("/", lyricsApi.HandleIndex)
 	apiHandler.HandleFunc("GET /providers", lyricsApi.HandleListProviders)
 	apiHandler.HandleFunc("GET /lyrics", lyricsApi.HandleGetSongLyrics)
-	apiHandler.HandleFunc("POST /lyrics", lyricsApi.HandleSubmitSongLyrics)
+	apiHandler.HandleFunc("POST /dank/lyrics", dankLyricsApi.HandleSubmitSongLyrics)
 	apiHandler.HandleFunc("GET /dank/lyrics", dankLyricsApi.HandleGetSongLyrics)
 	apiHandler.HandleFunc("POST /auth", authApi.HandleAuth)
 	apiHandler.HandleFunc("POST /auth/confirm", authApi.HandleConfirmAuth)

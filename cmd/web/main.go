@@ -219,7 +219,7 @@ func handleSubmitLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = makeApiPostRequest("/lyrics", sessionToken.Value, lyrics)
+	err = makeApiPostRequest("/dank/lyrics", sessionToken.Value, lyrics)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Something went wrong"))
