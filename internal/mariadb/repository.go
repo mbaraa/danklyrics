@@ -41,7 +41,7 @@ func (r *repository) GetLyricsBySongTitle(title string) ([]models.Lyrics, error)
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "song_title LIKE '%"+title+"%'").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+title+"%')").
 			Error,
 	)
 	if err != nil {
@@ -57,7 +57,7 @@ func (r *repository) GetLyricsBySongTitleAndArtistName(songTitle, artistName str
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "song_title LIKE '%"+songTitle+"%' AND artist_name LIKE '%"+artistName+"%'").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+songTitle+"%') AND LOWER(artist_name) LIKE LOWER('%"+artistName+"%')").
 			Error,
 	)
 	if err != nil {
@@ -73,7 +73,7 @@ func (r *repository) GetLyricsBySongAndAlbumTitle(songTitle, albumTitle string) 
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "song_title LIKE '%"+songTitle+"%' AND album_title LIKE '%"+albumTitle+"%'").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+songTitle+"%') AND LOWER(album_title) LIKE LOWER('%"+albumTitle+"%')").
 			Error,
 	)
 	if err != nil {
@@ -89,7 +89,7 @@ func (r *repository) GetLyricsBySongTitleArtistNameAndAlbumTitle(songTitle, arti
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "song_title LIKE '%"+songTitle+"%' AND artist_name LIKE '%"+artistName+"%' AND album_title LIKE '%"+albumTitle+"%'").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+songTitle+"%') AND LOWER(artist_name) LIKE LOWER('%"+artistName+"%') AND LOWER(album_title) LIKE LOWER('%"+albumTitle+"%')").
 			Error,
 	)
 	if err != nil {
