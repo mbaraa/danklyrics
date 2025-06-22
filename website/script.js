@@ -132,6 +132,7 @@ async function handleSubmitLyricsFormSubmission(e) {
       clearInterval(intervalId);
       lyricsSubmitOutput.innerText =
         "Done, you'll receive an email when the lyrics is approved!";
+      lyricsForm.reset();
     })
     .catch((err) => {
       lyricsSubmitOutput.innerText = `Something went wrong, ${err}`;
