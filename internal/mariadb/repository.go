@@ -1,6 +1,8 @@
 package mariadb
 
 import (
+	"fmt"
+
 	"github.com/mbaraa/danklyrics/internal/models"
 
 	"gorm.io/gorm"
@@ -41,7 +43,7 @@ func (r *repository) GetLyricsBySongTitle(title string) ([]models.Lyrics, error)
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+title+"%')").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER(?)", likeArg(title)).
 			Error,
 	)
 	if err != nil {
@@ -57,7 +59,7 @@ func (r *repository) GetLyricsBySongTitleAndArtistName(songTitle, artistName str
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+songTitle+"%') AND LOWER(artist_name) LIKE LOWER('%"+artistName+"%')").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER(?) AND LOWER(artist_name) LIKE LOWER(?)", likeArg(songTitle), likeArg(artistName)).
 			Error,
 	)
 	if err != nil {
@@ -73,7 +75,7 @@ func (r *repository) GetLyricsBySongAndAlbumTitle(songTitle, albumTitle string) 
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+songTitle+"%') AND LOWER(album_title) LIKE LOWER('%"+albumTitle+"%')").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER(?) AND LOWER(album_title) LIKE LOWER(?)", likeArg(songTitle), likeArg(albumTitle)).
 			Error,
 	)
 	if err != nil {
@@ -89,7 +91,7 @@ func (r *repository) GetLyricsBySongTitleArtistNameAndAlbumTitle(songTitle, arti
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
-			Find(&lyricses, "LOWER(song_title) LIKE LOWER('%"+songTitle+"%') AND LOWER(artist_name) LIKE LOWER('%"+artistName+"%') AND LOWER(album_title) LIKE LOWER('%"+albumTitle+"%')").
+			Find(&lyricses, "LOWER(song_title) LIKE LOWER(?) AND LOWER(artist_name) LIKE LOWER(?) AND LOWER(album_title) LIKE LOWER(?)", likeArg(songTitle), likeArg(artistName), likeArg(albumTitle)).
 			Error,
 	)
 	if err != nil {
@@ -127,4 +129,8 @@ func (r *repository) GetLyricsRequestById(id uint) (models.LyricsRequest, error)
 	}
 
 	return lyrics, nil
+}
+
+func likeArg(arg string) string {
+	return fmt.Sprintf("%%%s%%", arg)
 }
