@@ -54,8 +54,21 @@ main {
 }
 
 .dank-container {
-  width: 80%;
+  width: 95%;
   margin: auto;
+}
+
+@media screen and (min-width: 1300px) {
+  .dank-container {
+    width: 80%;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .tab-panel {
+    padding: 15px 10px 15px 10px !important;
+  }
 }
 
 .dank-text {
