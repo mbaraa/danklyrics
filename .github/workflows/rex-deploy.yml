@@ -25,3 +25,4 @@ jobs:
           server-url: ${{ secrets.REX_SERVER }}
           token: ${{ secrets.REX_KEY }}
           repo-name: danklyrics
+          compose-file-name: "docker-compose-prod.yml"
