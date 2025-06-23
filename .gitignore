@@ -10,4 +10,4 @@ _*/
 tmp/
 Session.vim
 .db/
-website/htmx/*.js
+website/admin/htmx/*.js
