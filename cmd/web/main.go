@@ -9,12 +9,13 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/mbaraa/danklyrics/internal/config"
 	"github.com/mbaraa/danklyrics/pkg/client"
 	"github.com/mbaraa/danklyrics/pkg/provider"
-	"github.com/mbaraa/danklyrics/website"
+	website "github.com/mbaraa/danklyrics/website/user"
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/html"
@@ -55,6 +56,11 @@ func init() {
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
+	if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "admin") {
+		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+		return
+	}
+
 	content, err := publicFiles.Open("index.html")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -229,7 +235,14 @@ func handleSubmitLyrics(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	pagesHandler := http.NewServeMux()
-	pagesHandler.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.FS(publicFiles))))
+	pagesHandler.Handle("/static/", http.StripPrefix("/static", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "admin") {
+			http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+			return
+		}
+
+		http.FileServer(http.FS(publicFiles)).ServeHTTP(w, r)
+	})))
 	pagesHandler.HandleFunc("/", handleIndex)
 
 	apisHandler := http.NewServeMux()

@@ -1,0 +1,21 @@
+FROM golang:1.24-alpine AS build
+
+WORKDIR /app
+COPY . .
+
+RUN apk add --no-cache wget
+
+RUN	wget https://unpkg.com/htmx-ext-json-enc@2.0.2/dist/json-enc.min.js -O website/admin/htmx/json-enc.js &&\
+	wget https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js -O website/admin/htmx/htmx.min.js
+
+RUN go mod tidy && \
+    go build -ldflags="-w -s" -o danklyrics-admin ./cmd/admin/main.go
+
+FROM alpine:latest AS run
+
+WORKDIR /app
+COPY --from=build /app/danklyrics-admin .
+
+EXPOSE 8082
+
+CMD ["./danklyrics-admin"]

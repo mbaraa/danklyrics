@@ -44,7 +44,7 @@ func (l *Lyrics) AfterFind(tx *gorm.DB) error {
 		Find(&synced).
 		Error
 	if err != nil {
-		return err
+		return nil
 	}
 
 	l.LyricsSynced = make(map[string]string, 0)
@@ -63,9 +63,11 @@ func (l *Lyrics) AfterDelete(tx *gorm.DB) error {
 		return err
 	}
 
-	return tx.
+	_ = tx.
 		Exec("DELETE FROM lyrics_synced_parts WHERE lyrics_id = ?", l.Id).
 		Error
+
+	return nil
 }
 
 func (l *Lyrics) AfterCreate(tx *gorm.DB) error {

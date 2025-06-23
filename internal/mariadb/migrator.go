@@ -19,6 +19,7 @@ func Migrate() error {
 		new(models.LyricsRequest),
 		new(models.LyricsRequestPart),
 		new(models.LyricsRequestSyncedPart),
+		new(models.Admin),
 	)
 	if err != nil {
 		return err

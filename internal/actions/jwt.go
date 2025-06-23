@@ -12,6 +12,8 @@ type Subject = string
 const (
 	// JwtSessionToken used to verify that the user is authed to submit a lyrics.
 	JwtSessionToken Subject = "SESSION_TOKEN"
+	// JwtAdminToken used to verify that the user is an authed admin to do admin stuff.
+	JwtAdminToken Subject = "ADMIN_TOKEN"
 )
 
 // JwtClaims is iondsa, it's just JWT claims blyat!

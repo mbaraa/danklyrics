@@ -1,5 +1,5 @@
 services:
-  app:
+  danklyrics-web:
     container_name: "danklyrics-web"
     build:
       context: .
@@ -11,7 +11,7 @@ services:
     networks:
       - danklyricsnetwork
 
-  api:
+  danklyrics-api:
     container_name: "danklyrics-api"
     build:
       context: .
@@ -19,6 +19,19 @@ services:
     restart: "always"
     ports:
       - "20421:8081"
+    stdin_open: true
+    env_file: .env.docker
+    networks:
+      - danklyricsnetwork
+
+  danklyrics-admin:
+    container_name: "danklyrics-admin"
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    restart: "always"
+    ports:
+      - "20419:8082"
     stdin_open: true
     env_file: .env.docker
     networks:
