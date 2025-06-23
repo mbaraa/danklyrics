@@ -13,6 +13,11 @@ body {
   min-height: 100dvh;
 }
 
+* {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 /* components specific styles */
 
 main {
@@ -108,66 +113,13 @@ main {
   height: 20px;
 }
 
-.artist-album-container {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 15px;
-}
-
-@media screen and (min-width: 768px) {
-  .artist-album-container {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    flex-direction: row;
-  }
-}
-
 .dank-form-button {
   height: 30px;
-}
-
-.dank-song-name {
-  padding: 10px;
-  width: 100%;
-}
-
-.dank-album-name {
-  padding: 10px;
-  width: 100%;
-}
-
-.dank-artist-name {
-  padding: 10px;
-  width: 100%;
-}
-
-.dank-lyrics {
-  padding: 10px;
-  width: 100%;
-  resize: none;
 }
 
 .dank-email {
   padding: 10px;
   width: 100%;
-}
-.dank-lyrics-content-tab {
-  width: 100%;
-  text-align: center;
-}
-
-#dank-lyrics-content {
-  width: 100%;
-  text-align: left;
-  user-select: text !important;
-}
-
-.gh {
-  width: 25px;
-  height: 25px;
 }
 
 header p {
@@ -175,63 +127,29 @@ header p {
   line-height: 25px;
   margin-top: 10px;
 }
-main > div {
-  margin-bottom: 15px;
-}
-main > div h2 {
-  -webkit-user-select: none;
-  user-select: none;
-  margin-bottom: 5px;
-}
 
-.footer {
-  margin: 0;
-  background-color: #3e4637;
+.lyrics-requests {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  text-align: center;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
 }
 
-.footer-container {
+.lyrics-request {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 20px 8px 10px 8px;
-  color: white;
+  justify-content: space-between;
+  padding: 5px;
 }
 
-.flex-center-content {
+.lyrics-request-meta {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.github-box {
-  background-color: black;
-  padding: 8px;
-  max-height: 40px;
-}
-
-.github-img {
-  height: 24px;
-  margin-left: 4px;
-  margin-right: 4px;
-}
-
-.text-link {
-  font-size: 1rem;
-  line-height: 1.5rem;
-  text-decoration: underline;
-  color: white;
-}
-
-.icon-img {
-  display: inline-block;
-  max-height: 40px;
-}
-
-.pixelated {
-  image-rendering: pixelated;
+.lyrics-request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: space-between;
 }

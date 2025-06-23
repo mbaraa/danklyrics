@@ -10,27 +10,15 @@ import (
 type LyricsRequest struct {
 	Id uint `gorm:"primaryKey;autoIncrement"`
 
-	SongTitle  string `gorm:"index"`
-	ArtistName string
-	AlbumTitle string
+	SongTitle      string `gorm:"index"`
+	ArtistName     string
+	AlbumTitle     string
+	RequesterEmail string
 
 	LyricsPlain  []string          `gorm:"-"`
 	LyricsSynced map[string]string `gorm:"-"`
 
 	CreatedAt time.Time `gorm:"index"`
-}
-
-func (l *LyricsRequest) AfterDelete(tx *gorm.DB) error {
-	err := tx.
-		Exec("DELETE FROM lyrics_request_parts WHERE lyrics_request_id = ?", l.Id).
-		Error
-	if err != nil {
-		return err
-	}
-
-	return tx.
-		Exec("DELETE FROM lyrics_request_synced_parts WHERE lyrics_request_id = ?", l.Id).
-		Error
 }
 
 func (l *LyricsRequest) AfterCreate(tx *gorm.DB) error {

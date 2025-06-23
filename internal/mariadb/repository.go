@@ -116,6 +116,17 @@ func (r *repository) CreateLyricsRequest(l models.LyricsRequest) (models.LyricsR
 }
 
 func (r *repository) DeleteLyricsRequest(id uint) error {
+	err := r.client.
+		Exec("DELETE FROM lyrics_request_parts WHERE lyrics_request_id = ?", id).
+		Error
+	if err != nil {
+		return err
+	}
+
+	_ = r.client.
+		Exec("DELETE FROM lyrics_request_synced_parts WHERE lyrics_request_id = ?", id).
+		Error
+
 	return tryWrapDbError(
 		r.client.
 			Exec("DELETE FROM lyrics_requests WHERE id = ?", id).
@@ -162,7 +173,7 @@ func (r *repository) GetLyricsRequestById(id uint) (models.LyricsRequest, error)
 			Error,
 	)
 	if err != nil {
-		return models.LyricsRequest{}, err
+		return lyrics, nil
 	}
 
 	lyrics.LyricsSynced = make(map[string]string, 0)

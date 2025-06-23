@@ -109,7 +109,7 @@ func (a *Actions) CreateLyrics(l models.Lyrics) (models.Lyrics, error) {
 }
 
 func (a *Actions) CreateLyricsRequest(token string, l models.Lyrics) error {
-	err := a.jwt.Validate(token, JwtSessionToken)
+	tokenDecoded, err := a.jwt.Decode(token, JwtSessionToken)
 	if err != nil {
 		return err
 	}
@@ -119,11 +119,12 @@ func (a *Actions) CreateLyricsRequest(token string, l models.Lyrics) error {
 	}
 
 	intLyrics := intmodels.LyricsRequest{
-		SongTitle:    l.SongName,
-		ArtistName:   l.ArtistName,
-		AlbumTitle:   l.AlbumName,
-		LyricsPlain:  l.Parts,
-		LyricsSynced: l.Synced,
+		SongTitle:      l.SongName,
+		ArtistName:     l.ArtistName,
+		AlbumTitle:     l.AlbumName,
+		LyricsPlain:    l.Parts,
+		LyricsSynced:   l.Synced,
+		RequesterEmail: tokenDecoded.Payload.Email,
 	}
 
 	_, err = a.repo.CreateLyricsRequest(intLyrics)
@@ -133,18 +134,3 @@ func (a *Actions) CreateLyricsRequest(token string, l models.Lyrics) error {
 
 	return nil
 }
-
-// func (a *Actions) GetLyricsRequestById(id uint) (models.Lyrics, error) {
-// 	intLyrics, err := a.repo.GetLyricsRequestById(id)
-// 	if err != nil {
-// 		return models.Lyrics{}, err
-// 	}
-//
-// 	return models.Lyrics{
-// 		SongName:   intLyrics.SongTitle,
-// 		ArtistName: intLyrics.ArtistName,
-// 		AlbumName:  intLyrics.AlbumTitle,
-// 		Parts:      intLyrics.LyricsPlain,
-// 		Synced:     intLyrics.LyricsSynced,
-// 	}, nil
-// }

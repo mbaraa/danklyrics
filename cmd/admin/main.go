@@ -5,49 +5,37 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"regexp"
 
+	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/config"
-	"github.com/mbaraa/danklyrics/pkg/client"
-	"github.com/mbaraa/danklyrics/pkg/provider"
+	"github.com/mbaraa/danklyrics/internal/handlers"
+	"github.com/mbaraa/danklyrics/internal/jwt"
+	"github.com/mbaraa/danklyrics/internal/mailer"
+	"github.com/mbaraa/danklyrics/internal/mariadb"
 	website "github.com/mbaraa/danklyrics/website/admin"
-	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/css"
-	"github.com/tdewolff/minify/v2/html"
-	"github.com/tdewolff/minify/v2/js"
-	mjson "github.com/tdewolff/minify/v2/json"
-	"github.com/tdewolff/minify/v2/svg"
-	"github.com/tdewolff/minify/v2/xml"
 )
 
 var (
-	lyricser *client.Http
-
+	usecases    *actions.Actions
 	publicFiles embed.FS
-	minifyer    *minify.M
 )
 
 func init() {
-	publicFiles = website.FS()
-
-	minifyer = minify.New()
-	minifyer.AddFunc("text/css", css.Minify)
-	minifyer.AddFunc("text/html", html.Minify)
-	minifyer.AddFunc("image/svg+xml", svg.Minify)
-	minifyer.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
-	minifyer.AddFuncRegexp(regexp.MustCompile("[/+]json$"), mjson.Minify)
-	minifyer.AddFuncRegexp(regexp.MustCompile("[/+]xml$"), xml.Minify)
-
-	var err error
-	lyricser, err = client.NewHttp(client.Config{
-		GeniusClientId:     config.Env().GeniusClientId,
-		GeniusClientSecret: config.Env().GeniusClientSecret,
-		Providers:          []provider.Name{provider.Dank, provider.LyricFind, provider.Genius},
-		ApiAddress:         config.Env().ApiAddress,
-	})
+	repo, err := mariadb.New()
 	if err != nil {
 		panic(err)
 	}
+
+	err = mariadb.Migrate()
+	if err != nil {
+		panic(err)
+	}
+
+	mailUtil := mailer.New()
+	jwtUtil := jwt.New[actions.TokenPayload]()
+	usecases = actions.New(repo, mailUtil, jwtUtil)
+
+	publicFiles = website.FS()
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -63,19 +51,36 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	_ = content.Close()
 }
 
+func handleRobots(w http.ResponseWriter, r *http.Request) {
+	content, err := publicFiles.Open("robots.txt")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+	_, _ = io.Copy(w, content)
+	_ = content.Close()
+}
+
 func main() {
 	pagesHandler := http.NewServeMux()
 	pagesHandler.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.FS(publicFiles))))
 	pagesHandler.HandleFunc("/", handleIndex)
+	pagesHandler.HandleFunc("/robots.txt", handleRobots)
+
+	adminApi := handlers.NewAdminApi(usecases)
 
 	apisHandler := http.NewServeMux()
-	apisHandler.HandleFunc("GET /lyrics/requests", handleGetSongLyrics)
-	apisHandler.HandleFunc("GET /lyrics/request/{id}", handleGetSongLyrics)
-	apisHandler.HandleFunc("POST /lyrics/request/approve/{id}", handleGetSongLyrics)
-	apisHandler.HandleFunc("POST /auth", handleAuthSubmitLyrics)
+	apisHandler.HandleFunc("GET /lyrics/requests", adminApi.HandleListLyricsRequests)
+	apisHandler.HandleFunc("GET /lyrics/request/{id}", adminApi.HandleGetLyricsRequest)
+	apisHandler.HandleFunc("POST /lyrics/request/approve/{id}", adminApi.HandleApproveLyricsRequest)
+	apisHandler.HandleFunc("POST /lyrics/request/reject/{id}", adminApi.HandleRejectLyricsRequest)
+	apisHandler.HandleFunc("POST /auth", adminApi.HandleAuthenticate)
 
 	applicationHandler := http.NewServeMux()
-	applicationHandler.Handle("/", minifyer.Middleware(pagesHandler))
+	applicationHandler.Handle("/", pagesHandler)
 	applicationHandler.Handle("/api/", http.StripPrefix("/api", apisHandler))
 
 	log.Printf("Starting web server at port %s", config.Env().AdminPort)
