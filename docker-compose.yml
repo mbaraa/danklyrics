@@ -1,5 +1,5 @@
 services:
-  app:
+  danklyrics-web:
     container_name: "danklyrics-web"
     build:
       context: .
@@ -11,7 +11,7 @@ services:
     networks:
       - danklyricsnetwork
 
-  api:
+  danklyrics-api:
     container_name: "danklyrics-api"
     build:
       context: .
@@ -24,7 +24,7 @@ services:
     networks:
       - danklyricsnetwork
 
-  admin:
+  danklyrics-admin:
     container_name: "danklyrics-admin"
     build:
       context: .
