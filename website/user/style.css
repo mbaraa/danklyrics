@@ -1,0 +1,237 @@
+/* global styles */
+
+html,
+div {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #4a5942;
+  color: #dedfd6;
+  min-height: 100dvh;
+}
+
+/* components specific styles */
+
+main {
+  min-height: 65dvh;
+}
+
+.title-container {
+  width: 100%;
+  text-align: center;
+}
+
+.title-sub {
+  font-size: 1.5rem;
+  margin: 0;
+  font-style: italic;
+  height: 55px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+  .title {
+    font-size: 6rem;
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  .title {
+    font-size: 10rem;
+    height: 200px;
+  }
+}
+
+.dank-container {
+  width: 95%;
+  margin: auto;
+}
+
+@media screen and (min-width: 1300px) {
+  .dank-container {
+    width: 80%;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .tab-panel {
+    padding: 15px 10px 15px 10px !important;
+  }
+}
+
+.dank-text {
+  font-size: 1.2rem;
+  line-height: 30px;
+}
+
+.dank-form-container {
+  width: 100%;
+  margin: auto;
+  padding: 20px 0px 20px 0px;
+}
+
+.dank-form-title {
+  width: 100%;
+  text-align: center;
+  padding-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.dank-form {
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+@media screen and (min-width: 768px) {
+  .dank-form {
+    width: 750px;
+  }
+}
+
+.dank-form-item {
+  width: 100%;
+  height: 20px;
+}
+
+.artist-album-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 15px;
+}
+
+@media screen and (min-width: 768px) {
+  .artist-album-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+}
+
+.dank-form-button {
+  height: 30px;
+}
+
+.dank-song-name {
+  padding: 10px;
+  width: 100%;
+}
+
+.dank-album-name {
+  padding: 10px;
+  width: 100%;
+}
+
+.dank-artist-name {
+  padding: 10px;
+  width: 100%;
+}
+
+.dank-lyrics {
+  padding: 10px;
+  width: 100%;
+  resize: none;
+}
+
+.dank-email {
+  padding: 10px;
+  width: 100%;
+}
+.dank-lyrics-content-tab {
+  width: 100%;
+  text-align: center;
+}
+
+#dank-lyrics-content {
+  width: 100%;
+  text-align: left;
+  user-select: text !important;
+}
+
+.gh {
+  width: 25px;
+  height: 25px;
+}
+
+header p {
+  font-size: 22px;
+  line-height: 25px;
+  margin-top: 10px;
+}
+main > div {
+  margin-bottom: 15px;
+}
+main > div h2 {
+  -webkit-user-select: none;
+  user-select: none;
+  margin-bottom: 5px;
+}
+
+.footer {
+  margin: 0;
+  background-color: #3e4637;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+.footer-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 8px 10px 8px;
+  color: white;
+}
+
+.flex-center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.github-box {
+  background-color: black;
+  padding: 8px;
+  max-height: 40px;
+}
+
+.github-img {
+  height: 24px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.text-link {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-decoration: underline;
+  color: white;
+}
+
+.icon-img {
+  display: inline-block;
+  max-height: 40px;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}

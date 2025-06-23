@@ -13,6 +13,7 @@ func init() {
 	_config = config{
 		Port:               getEnv("PORT"),
 		ApiPort:            getEnv("API_PORT"),
+		AdminPort:          getEnv("ADMIN_PORT"),
 		ApiAddress:         getEnv("API_ADDRESS"),
 		GeniusClientId:     getEnv("GENIUS_CLIENT_ID"),
 		GeniusClientSecret: getEnv("GENIUS_CLIENT_SECRET"),
@@ -45,6 +46,7 @@ func init() {
 type config struct {
 	Port               string
 	ApiPort            string
+	AdminPort          string
 	ApiAddress         string
 	GeniusClientId     string
 	GeniusClientSecret string

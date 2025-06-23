@@ -24,5 +24,18 @@ services:
     networks:
       - danklyricsnetwork
 
+  admin:
+    container_name: "danklyrics-admin"
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    restart: "always"
+    ports:
+      - "20419:8082"
+    stdin_open: true
+    env_file: .env.docker
+    networks:
+      - danklyricsnetwork
+
 networks:
   danklyricsnetwork: {}

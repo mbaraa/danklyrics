@@ -115,6 +115,14 @@ func (r *repository) CreateLyricsRequest(l models.LyricsRequest) (models.LyricsR
 	return l, nil
 }
 
+func (r *repository) DeleteLyricsRequest(id uint) error {
+	return tryWrapDbError(
+		r.client.
+			Exec("DELETE FROM lyrics_requests WHERE id = ?", id).
+			Error,
+	)
+}
+
 func (r *repository) GetLyricsRequestById(id uint) (models.LyricsRequest, error) {
 	var lyrics models.LyricsRequest
 
@@ -128,7 +136,73 @@ func (r *repository) GetLyricsRequestById(id uint) (models.LyricsRequest, error)
 		return models.LyricsRequest{}, err
 	}
 
+	parts := make([]models.LyricsRequestPart, 0)
+	err = tryWrapDbError(
+		r.client.
+			Model(new(models.LyricsRequestPart)).
+			Where("lyrics_request_id = ?", id).
+			Find(&parts).
+			Error,
+	)
+	if err != nil {
+		return models.LyricsRequest{}, err
+	}
+
+	lyrics.LyricsPlain = make([]string, 0, len(parts))
+	for _, part := range parts {
+		lyrics.LyricsPlain = append(lyrics.LyricsPlain, part.Text)
+	}
+
+	synced := make([]models.LyricsRequestSyncedPart, 0)
+	err = tryWrapDbError(
+		r.client.
+			Model(new(models.LyricsRequestSyncedPart)).
+			Where("lyrics_request_id = ?", id).
+			Find(&synced).
+			Error,
+	)
+	if err != nil {
+		return models.LyricsRequest{}, err
+	}
+
+	lyrics.LyricsSynced = make(map[string]string, 0)
+	for _, part := range synced {
+		lyrics.LyricsSynced[part.Time] = part.Text
+	}
+
 	return lyrics, nil
+}
+
+func (r *repository) GetLyricsRequests() ([]models.LyricsRequest, error) {
+	lyricsRequests := make([]models.LyricsRequest, 0)
+
+	err := tryWrapDbError(
+		r.client.
+			Model(new(models.LyricsRequest)).
+			Find(&lyricsRequests).
+			Error,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return lyricsRequests, nil
+}
+
+func (r *repository) GetAdminByUsername(username string) (models.Admin, error) {
+	var admin models.Admin
+
+	err := tryWrapDbError(
+		r.client.
+			Model(new(models.Admin)).
+			First(&admin, "username = ?", username).
+			Error,
+	)
+	if err != nil {
+		return models.Admin{}, err
+	}
+
+	return admin, nil
 }
 
 func likeArg(arg string) string {
