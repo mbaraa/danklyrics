@@ -6,7 +6,7 @@ import (
 
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/config"
-	"github.com/mbaraa/danklyrics/internal/handlers"
+	"github.com/mbaraa/danklyrics/internal/handlers/api"
 	"github.com/mbaraa/danklyrics/internal/jwt"
 	"github.com/mbaraa/danklyrics/internal/mailer"
 	"github.com/mbaraa/danklyrics/internal/mariadb"
@@ -35,9 +35,9 @@ func init() {
 func main() {
 	apiHandler := http.NewServeMux()
 
-	lyricsApi := handlers.NewLyricsFinderApi(usecases)
-	dankLyricsApi := handlers.NewDankLyricsApi(usecases)
-	authApi := handlers.NewAuthApi(usecases)
+	lyricsApi := api.NewLyricsFinderApi(usecases)
+	dankLyricsApi := api.NewDankLyricsApi(usecases)
+	authApi := api.NewAuthApi(usecases)
 
 	apiHandler.HandleFunc("/", lyricsApi.HandleIndex)
 	apiHandler.HandleFunc("GET /providers", lyricsApi.HandleListProviders)

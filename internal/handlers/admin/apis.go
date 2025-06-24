@@ -1,4 +1,4 @@
-package handlers
+package admin
 
 import (
 	"embed"
@@ -18,17 +18,17 @@ var (
 	lyricsRequestTemplate embed.FS
 )
 
-type adminApi struct {
+type api struct {
 	usecases *actions.Actions
 }
 
-func NewAdminApi(usecases *actions.Actions) *adminApi {
-	return &adminApi{
+func NewAdminApi(usecases *actions.Actions) *api {
+	return &api{
 		usecases: usecases,
 	}
 }
 
-func (a *adminApi) HandleAuthenticate(w http.ResponseWriter, r *http.Request) {
+func (a *api) HandleAuthenticate(w http.ResponseWriter, r *http.Request) {
 	var reqBody actions.AuthenticateAdminParams
 	err := json.NewDecoder(r.Body).Decode(&reqBody)
 	if err != nil {
@@ -54,7 +54,7 @@ func (a *adminApi) HandleAuthenticate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("HX-Redirect", "/")
 }
 
-func (a *adminApi) HandleListLyricsRequests(w http.ResponseWriter, r *http.Request) {
+func (a *api) HandleListLyricsRequests(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := r.Cookie("admin-token")
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -78,7 +78,7 @@ func (a *adminApi) HandleListLyricsRequests(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (a *adminApi) HandleGetLyricsRequest(w http.ResponseWriter, r *http.Request) {
+func (a *api) HandleGetLyricsRequest(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := r.Cookie("admin-token")
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -109,7 +109,7 @@ func (a *adminApi) HandleGetLyricsRequest(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func (a *adminApi) HandleApproveLyricsRequest(w http.ResponseWriter, r *http.Request) {
+func (a *api) HandleApproveLyricsRequest(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := r.Cookie("admin-token")
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -132,7 +132,7 @@ func (a *adminApi) HandleApproveLyricsRequest(w http.ResponseWriter, r *http.Req
 	}
 }
 
-func (a *adminApi) HandleRejectLyricsRequest(w http.ResponseWriter, r *http.Request) {
+func (a *api) HandleRejectLyricsRequest(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := r.Cookie("admin-token")
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
