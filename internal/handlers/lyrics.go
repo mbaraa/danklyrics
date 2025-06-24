@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"slices"
 
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/pkg/client"
@@ -30,15 +29,13 @@ func (l *lyricsFinderApi) HandleIndex(w http.ResponseWriter, r *http.Request) {
 func (l *lyricsFinderApi) HandleListProviders(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode([]map[string]string{
+		{"name": "DankLyrics", "id": "dank"},
 		{"name": "LyricFind", "id": "lrc"},
-		{"name": "Genius", "id": "genius"},
 	})
 }
 
 func (l *lyricsFinderApi) HandleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 	providers := r.URL.Query()["providers"]
-	geniusClientId := r.URL.Query().Get("genius_client_id")
-	geniusClientSecret := r.URL.Query().Get("genius_client_secret")
 
 	artistName, okArtist := r.URL.Query()["artist"]
 	albumName, okAlbum := r.URL.Query()["album"]
@@ -51,15 +48,6 @@ func (l *lyricsFinderApi) HandleGetSongLyrics(w http.ResponseWriter, r *http.Req
 		_ = json.NewEncoder(w).Encode(errorResponse{
 			Message:         "You must specify at least one provider",
 			SuggestedAction: "Check the `GET /providers` endpoint.",
-			DocsLink:        docsLink,
-		})
-		return
-	}
-	if slices.Contains(providers, "genius") && (geniusClientId == "" || geniusClientSecret == "") {
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(errorResponse{
-			Message:         "You must specify genius' client id and secret when using genius as a provider.",
-			SuggestedAction: "Visit https://docs.genius.com/",
 			DocsLink:        docsLink,
 		})
 		return
@@ -98,9 +86,7 @@ func (l *lyricsFinderApi) HandleGetSongLyrics(w http.ResponseWriter, r *http.Req
 		providersConfig = append(providersConfig, provider.Name(p))
 	}
 	lyricser, err := client.New(client.Config{
-		GeniusClientId:     geniusClientId,
-		GeniusClientSecret: geniusClientSecret,
-		Providers:          providersConfig,
+		Providers: providersConfig,
 	})
 
 	lyrics, err := lyricser.GetSongLyrics(searchInput)

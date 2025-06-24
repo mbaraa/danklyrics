@@ -45,10 +45,8 @@ func init() {
 
 	var err error
 	lyricser, err = client.NewHttp(client.Config{
-		GeniusClientId:     config.Env().GeniusClientId,
-		GeniusClientSecret: config.Env().GeniusClientSecret,
-		Providers:          []provider.Name{provider.Dank, provider.LyricFind, provider.Genius},
-		ApiAddress:         config.Env().ApiAddress,
+		Providers:  []provider.Name{provider.Dank, provider.LyricFind},
+		ApiAddress: config.Env().ApiAddress,
 	})
 	if err != nil {
 		panic(err)
