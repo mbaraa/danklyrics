@@ -1,0 +1,40 @@
+package templates
+
+templ SubmitLyricsAuth() {
+	<h2 class="dank-form-title">Submit lyrics for a song.</h2>
+	<div id="dank-submit-form-container">
+		<form
+			action="#"
+			id="dank-submit-auth-form"
+			class="dank-form"
+			hx-ext="json-enc"
+			hx-post="/api/auth"
+			hx-target="#dank-lyrics-auth-content"
+			hx-swap="innerHTML"
+			hx-trigger="submit"
+		>
+			<input
+				class="cs-input dank-email"
+				id="email"
+				type="email"
+				name="email"
+				placeholder="Email"
+				required
+			/>
+			<span>
+				<i>
+					Email is needed for spam protection (I have a smol
+					server)
+				</i>
+				<br/>
+				<i>Your email is not shared with anyone!</i>
+			</span>
+			<input
+				class="cs-btn dank-form-button"
+				type="submit"
+				value="Authenticate"
+			/>
+			<div id="dank-lyrics-auth-content"></div>
+		</form>
+	</div>
+}

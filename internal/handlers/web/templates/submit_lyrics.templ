@@ -1,0 +1,50 @@
+package templates
+
+templ SubmitLyrics() {
+	<h2 class="dank-form-title">Submit lyrics for a song.</h2>
+	<form
+		action="#"
+		id="dank-submit-form"
+		class="dank-form"
+	>
+		<div class="artist-album-container">
+			<input
+				class="cs-input dank-song-name"
+				id="songName"
+				type="text"
+				placeholder="Song name"
+				required
+			/>
+			<input
+				class="cs-input dank-artist-name"
+				id="artistName"
+				type="text"
+				placeholder="Artist name"
+				required
+			/>
+			<input
+				class="cs-input dank-album-name"
+				id="albumName"
+				type="text"
+				placeholder="Album name"
+				required
+			/>
+		</div>
+		<textarea
+			class="cs-input dank-lyrics"
+			id="lyrics"
+			type="input"
+			rows="20"
+			placeholder="Lyrics :0"
+			required
+		></textarea>
+		<input
+			class="cs-btn dank-form-button"
+			type="submit"
+			value="Submit"
+		/>
+		<p id="dank-lyrics-submit-content" style="user-select: text">
+			...
+		</p>
+	</form>
+}

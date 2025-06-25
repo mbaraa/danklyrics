@@ -3,7 +3,7 @@ node_modules
 .env
 .env.*
 !.env.example
-danklyrics
+danklyrics*
 views/**/*.go
 views/**/*.txt
 _*/
@@ -11,3 +11,7 @@ tmp/
 Session.vim
 .db/
 website/admin/htmx/*.js
+website/user/htmx/*.js
+*_templ.go
+*.txt
+

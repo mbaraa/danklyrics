@@ -5,8 +5,12 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/config"
 	"github.com/mbaraa/danklyrics/internal/handlers/web"
+	"github.com/mbaraa/danklyrics/internal/jwt"
+	"github.com/mbaraa/danklyrics/internal/mailer"
+	"github.com/mbaraa/danklyrics/internal/mariadb"
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/html"
@@ -18,6 +22,7 @@ import (
 
 var (
 	minifyer *minify.M
+	usecases *actions.Actions
 )
 
 func init() {
@@ -28,15 +33,31 @@ func init() {
 	minifyer.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
 	minifyer.AddFuncRegexp(regexp.MustCompile("[/+]json$"), mjson.Minify)
 	minifyer.AddFuncRegexp(regexp.MustCompile("[/+]xml$"), xml.Minify)
+
+	repo, err := mariadb.New()
+	if err != nil {
+		panic(err)
+	}
+
+	mailUtil := mailer.New()
+	jwtUtil := jwt.New[actions.TokenPayload]()
+	usecases = actions.New(repo, mailUtil, jwtUtil)
 }
 
 func main() {
-	pages := web.NewPages(nil)
+	pages := web.NewPages(usecases)
 	pagesHandler := http.NewServeMux()
-	pagesHandler.Handle("/static/", pages.StaticFiles())
 	pagesHandler.HandleFunc("/", pages.HandleIndex)
+	pagesHandler.HandleFunc("/{id}", pages.HandleLyrics)
+	pagesHandler.HandleFunc("/about", pages.HandleAbout)
+	pagesHandler.HandleFunc("/lyrics/submit", pages.HandleSubmitLyrics)
+	pagesHandler.HandleFunc("/tab/about", pages.HandleAboutTab)
+	pagesHandler.HandleFunc("/tab/lyrics/submit", pages.HandleSubmitLyricsTab)
+	pagesHandler.HandleFunc("/sitemap.xml", pages.HandleSitemap)
+	pagesHandler.HandleFunc("/robots.txt", pages.HandleRobots)
+	pagesHandler.Handle("/static/", pages.StaticFiles())
 
-	apis := web.NewApi(nil)
+	apis := web.NewApi(usecases)
 	apisHandler := http.NewServeMux()
 	apisHandler.HandleFunc("GET /lyrics", apis.HandleGetSongLyrics)
 	apisHandler.HandleFunc("POST /lyrics", apis.HandleSubmitLyrics)

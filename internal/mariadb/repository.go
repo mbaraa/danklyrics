@@ -3,6 +3,7 @@ package mariadb
 import (
 	"fmt"
 
+	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/models"
 
 	"gorm.io/gorm"
@@ -24,10 +25,32 @@ func New() (*repository, error) {
 }
 
 func (r *repository) CreateLyrics(lyrics models.Lyrics) (models.Lyrics, error) {
+	if lyrics.AlbumTitle != "" {
+		lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s-%s", lyrics.ArtistName, lyrics.AlbumTitle, lyrics.SongTitle))
+	} else {
+		lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s", lyrics.ArtistName, lyrics.SongTitle))
+	}
+
 	err := tryWrapDbError(
 		r.client.
 			Model(new(models.Lyrics)).
 			Create(&lyrics).
+			Error,
+	)
+	if err != nil {
+		return models.Lyrics{}, err
+	}
+
+	return lyrics, nil
+}
+
+func (r *repository) GetLyricsByPublicId(id string) (models.Lyrics, error) {
+	var lyrics models.Lyrics
+
+	err := tryWrapDbError(
+		r.client.
+			Model(new(models.Lyrics)).
+			First(&lyrics, "public_id = ?", id).
 			Error,
 	)
 	if err != nil {

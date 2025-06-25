@@ -8,7 +8,11 @@ import (
 	"strings"
 
 	"github.com/mbaraa/danklyrics/internal/actions"
+	"github.com/mbaraa/danklyrics/internal/handlers/web/templates"
+	"github.com/mbaraa/danklyrics/pkg/models"
 	website "github.com/mbaraa/danklyrics/website/user"
+
+	"github.com/a-h/templ"
 )
 
 var publicFiles embed.FS
@@ -33,16 +37,157 @@ func (p *pages) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content, err := publicFiles.Open("index.html")
+	w.Header().Set("Content-Type", "text/html")
+	err := templates.Layout(templates.PageProps{
+		PageId: templates.FindLyricsPage,
+		Title:  "Find lyrics",
+	}, templ.NopComponent).Render(r.Context(), w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
+}
+
+func (p *pages) HandleAbout(w http.ResponseWriter, r *http.Request) {
+	if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "admin") {
+		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+		return
+	}
 
 	w.Header().Set("Content-Type", "text/html")
-	_, _ = io.Copy(w, content)
-	_ = content.Close()
+	err := templates.Layout(templates.PageProps{
+		PageId: templates.AboutPage,
+		Title:  "About",
+	}, templates.About()).Render(r.Context(), w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+}
+
+func (p *pages) HandleSubmitLyrics(w http.ResponseWriter, r *http.Request) {
+	if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "admin") {
+		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+
+	sessionToken, err := r.Cookie("token")
+	if err != nil || sessionToken == nil {
+		_ = templates.Layout(templates.PageProps{
+			PageId: templates.SubmitLyricsPage,
+			Title:  "Submit Lyrics",
+		}, templates.SubmitLyricsAuth()).Render(r.Context(), w)
+		return
+	}
+
+	if err := p.usecases.ConfirmAuth(sessionToken.Value); err != nil {
+		_ = templates.Layout(templates.PageProps{
+			PageId: templates.SubmitLyricsPage,
+			Title:  "Submit Lyrics",
+		}, templates.SubmitLyricsAuth()).Render(r.Context(), w)
+		return
+	}
+
+	err = templates.Layout(templates.PageProps{
+		PageId: templates.SubmitLyricsPage,
+		Title:  "Submit Lyrics",
+	}, templates.SubmitLyrics()).Render(r.Context(), w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+}
+
+func (p *pages) HandleAboutTab(w http.ResponseWriter, r *http.Request) {
+	if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "admin") {
+		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	err := templates.About().Render(r.Context(), w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+}
+
+func (p *pages) HandleSubmitLyricsTab(w http.ResponseWriter, r *http.Request) {
+	if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "admin") {
+		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+
+	sessionToken, err := r.Cookie("token")
+	if err != nil || sessionToken == nil {
+		_ = templates.SubmitLyricsAuth().Render(r.Context(), w)
+		return
+	}
+
+	if err := p.usecases.ConfirmAuth(sessionToken.Value); err != nil {
+		_ = templates.SubmitLyricsAuth().Render(r.Context(), w)
+		return
+	}
+
+	err = templates.SubmitLyrics().Render(r.Context(), w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+}
+
+func (p *pages) HandleLyrics(w http.ResponseWriter, r *http.Request) {
+	if strings.Contains(r.URL.Path, ".go") || strings.Contains(r.URL.Path, "/admin") {
+		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+
+	lyricsSlug := r.PathValue("id")
+
+	lyrics, err := p.usecases.GetLyricsByPublicId(lyricsSlug)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		_ = templates.Layout(templates.PageProps{
+			PageId: templates.LyricsPage,
+			Title:  "Not found",
+		}, templates.SingleLyrics(models.Lyrics{})).Render(r.Context(), w)
+		return
+	}
+
+	_ = lyrics
+
+	err = templates.Layout(templates.PageProps{
+		PageId: templates.LyricsPage,
+		Title:  "todo",
+	}, templates.SingleLyrics(lyrics)).Render(r.Context(), w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+}
+
+func (p *pages) HandleSitemap(w http.ResponseWriter, r *http.Request) {
+	sitemapFile, _ := publicFiles.Open("sitemap.xml")
+	w.Header().Set("Content-Type", "application/xml")
+	_, _ = io.Copy(w, sitemapFile)
+}
+
+func (p *pages) HandleRobots(w http.ResponseWriter, r *http.Request) {
+	robotsFile, _ := publicFiles.Open("robots.txt")
+	w.Header().Set("Content-Type", "text/plain")
+	_, _ = io.Copy(w, robotsFile)
 }
 
 func (p *pages) StaticFiles() http.Handler {

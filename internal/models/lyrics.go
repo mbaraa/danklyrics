@@ -8,7 +8,8 @@ import (
 )
 
 type Lyrics struct {
-	Id uint `gorm:"primaryKey;autoIncrement"`
+	Id       uint   `gorm:"primaryKey;autoIncrement"`
+	PublicId string `gorm:"index;unique;not null"`
 
 	SongTitle  string `gorm:"index"`
 	ArtistName string `gorm:"index"`
@@ -38,14 +39,11 @@ func (l *Lyrics) AfterFind(tx *gorm.DB) error {
 	}
 
 	synced := make([]LyricsSyncedPart, 0)
-	err = tx.
+	_ = tx.
 		Model(new(LyricsSyncedPart)).
 		Where("lyrics_id = ?", l.Id).
 		Find(&synced).
 		Error
-	if err != nil {
-		return nil
-	}
 
 	l.LyricsSynced = make(map[string]string, 0)
 	for _, part := range synced {

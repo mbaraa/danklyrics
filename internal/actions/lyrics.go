@@ -7,6 +7,21 @@ import (
 	"github.com/mbaraa/danklyrics/pkg/models"
 )
 
+func (a *Actions) GetLyricsByPublicId(id string) (models.Lyrics, error) {
+	intLyrics, err := a.repo.GetLyricsByPublicId(id)
+	if err != nil {
+		return models.Lyrics{}, err
+	}
+
+	return models.Lyrics{
+		SongName:   intLyrics.SongTitle,
+		ArtistName: intLyrics.ArtistName,
+		AlbumName:  intLyrics.AlbumTitle,
+		Parts:      intLyrics.LyricsPlain,
+		Synced:     intLyrics.LyricsSynced,
+	}, nil
+}
+
 func (a *Actions) GetLyricsBySongTitle(title string) ([]models.Lyrics, error) {
 	intLyricses, err := a.repo.GetLyricsBySongTitle(title)
 	if err != nil {

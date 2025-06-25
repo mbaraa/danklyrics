@@ -10,6 +10,7 @@ import (
 
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/config"
+	"github.com/mbaraa/danklyrics/internal/handlers/web/templates"
 	"github.com/mbaraa/danklyrics/pkg/client"
 	"github.com/mbaraa/danklyrics/pkg/provider"
 )
@@ -69,7 +70,7 @@ func (a *api) HandleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(lyricsText.String()))
+	templates.SingleLyrics(lyricsText).Render(r.Context(), w)
 }
 
 func (a *api) HandleAuthSubmitLyrics(w http.ResponseWriter, r *http.Request) {
