@@ -2,6 +2,7 @@ package actions
 
 import (
 	"errors"
+	"time"
 
 	intmodels "github.com/mbaraa/danklyrics/internal/models"
 	"github.com/mbaraa/danklyrics/pkg/models"
@@ -116,10 +117,15 @@ func (a *Actions) CreateLyrics(l models.Lyrics) (models.Lyrics, error) {
 		LyricsSynced: l.Synced,
 	}
 
-	_, err := a.repo.CreateLyrics(intLyrics)
+	newLyrics, err := a.repo.CreateLyrics(intLyrics)
 	if err != nil {
 		return models.Lyrics{}, err
 	}
+
+	_ = a.sitemap.AddLyricsEntry(SitemapUrl{
+		PublicId: newLyrics.PublicId,
+		AddedAt:  newLyrics.CreatedAt.Format(time.RFC3339),
+	})
 
 	return models.Lyrics{}, nil
 }
