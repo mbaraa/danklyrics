@@ -2,7 +2,6 @@ package client
 
 import (
 	"github.com/mbaraa/danklyrics/internal/providers/dank"
-	"github.com/mbaraa/danklyrics/internal/providers/genius"
 	"github.com/mbaraa/danklyrics/internal/providers/lyricfind"
 	"github.com/mbaraa/danklyrics/pkg/finder"
 	"github.com/mbaraa/danklyrics/pkg/models"
@@ -16,9 +15,7 @@ type Local struct {
 
 // Config holds the configs needed to initialize [Local] or [Http] clients.
 type Config struct {
-	GeniusClientId     string
-	GeniusClientSecret string
-	Providers          []provider.Name
+	Providers []provider.Name
 	// ApiAddress only used by [Http] client, setting its value for [Local] client won't destroy the world, but it's pointless.
 	// defaults to (https://api.danklyrics.com)
 	ApiAddress string
@@ -30,8 +27,6 @@ func New(c Config) (*Local, error) {
 
 	for _, providerName := range c.Providers {
 		switch providerName {
-		case provider.Genius:
-			providers = append(providers, genius.New(c.GeniusClientId, c.GeniusClientSecret))
 		case provider.LyricFind:
 			providers = append(providers, lyricfind.New())
 		case provider.Dank:

@@ -1,0 +1,175 @@
+package templates
+
+templ Layout(props PageProps, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ props.Title } - DankLyrics</title>
+			<link
+				rel="stylesheet"
+				type="text/css"
+				href="https://cdn.jsdelivr.net/gh/ekmas/cs16.css@main/css/cs16.min.css"
+			/>
+			<link rel="stylesheet" href="/static/style.css"/>
+			<link
+				rel="icon"
+				type="image/png"
+				href="/static/favicon-96x96.png"
+				sizes="96x96"
+			/>
+			<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"/>
+			<link rel="shortcut icon" href="/static/favicon.ico"/>
+			<link
+				rel="apple-touch-icon"
+				sizes="180x180"
+				href="/static/apple-touch-icon.png"
+			/>
+			<meta name="apple-mobile-web-app-title" content="DankLyrics"/>
+			<link rel="manifest" href="/static/site.webmanifest"/>
+			<meta name="og:title" content={ props.Title + " - DankLyrics" }/>
+			if props.Description != "" {
+				<meta name="description" content={ props.Description }/>
+				<meta name="og:description" content={ props.Description }/>
+			} else {
+				<meta name="description" content="A lyrics finder API, Website and Go package!"/>
+				<meta name="og:description" content="A lyrics finder API, Website and Go package!"/>
+			}
+			<meta
+				name="keywords"
+				content="dank,lyrics,dank lyrics,lyrics api,dank lyrics api,lyrics finder,lyric find,lrclib"
+			/>
+			if props.Audio.Url != "" {
+				<meta property="og:audio" content={ props.Audio.Url }/>
+			}
+			if  props.Audio.Duration  != "" {
+				<meta property="music:duration" content={ props.Audio.Duration }/>
+			}
+			if  props.Audio.Album  != "" {
+				<meta property="music:album" content={ props.Audio.Album }/>
+			}
+			if props.Audio.Musician  != "" {
+				<meta property="music:musician" content={ props.Audio.Musician }/>
+			}
+			if props.Audio.SongTitle  != "" {
+				<meta property="music:song" content={ props.Audio.SongTitle }/>
+			}
+			if  props.Type != "" {
+				<meta property="og:type" content={ string(props.Type) }/>
+			}
+			if props.Url  != "" {
+				<meta property="og:url" content={ props.Url }/>
+			} else {
+				<meta property="og:url" content="https://danklyrics.com"/>
+			}
+			if props.ImageUrl  != "" {
+				<meta property="og:image" content={ props.ImageUrl }/>
+			} else {
+				<meta
+					property="og:image"
+					content="https://danklyrics.com/statis/favicon.png"
+				/>
+			}
+			<script src="/static/htmx/htmx.min.js"></script>
+			<script defer src="/static/htmx/json-enc.js"></script>
+			<script defer src="/static/htmx/hyperscript.min.js"></script>
+		</head>
+		<body>
+			@header()
+			<hr class="cs-hr"/>
+			<main>
+				<section class="dank-container">
+					<div class="dank-form-container">
+						<div class="cs-tabs">
+							<input
+								class="radiotab"
+								name="tabs"
+								tabindex="0"
+								type="radio"
+								id="lyrics"
+								if props.PageId == LyricsPage {
+									checked="checked"
+								}
+							/>
+							<label class="label" for="lyrics">Lyrics</label>
+							<div id="lyrics-tab" class="panel tab-panel" tabindex="0">
+								if props.PageId != LyricsPage {
+									Make a search first lol.
+									<br/>
+									Going to the "Find Lyrics" tab might help!
+								} else {
+									@content
+								}
+							</div>
+							<input
+								class="radiotab"
+								name="tabs"
+								tabindex="1"
+								type="radio"
+								id="findlyrics"
+								if props.PageId == FindLyricsPage {
+									checked="checked"
+								}
+								_="on click js window.history.replaceState(null, document.title, `${window.location.protocol}//${window.location.host}/`)"
+							/>
+							<label class="label" for="findlyrics">Find Lyrics</label>
+							<div id="findlyrics-tab" class="panel tab-panel" tabindex="1">
+								@FindLyrics()
+							</div>
+							<input
+								class="radiotab"
+								tabindex="2"
+								name="tabs"
+								type="radio"
+								id="submitlyrics"
+								hx-get="/tab/lyrics/submit"
+								hx-target="#submitlyrics-tab"
+								hx-swap="innerHTML"
+								hx-trigger="click"
+								if props.PageId == SubmitLyricsPage {
+									checked="checked"
+								}
+								_="on click js window.history.replaceState(null, document.title, `${window.location.protocol}//${window.location.host}/lyrics/submit`)"
+							/>
+							<label class="label" for="submitlyrics">Submit lyrics</label>
+							<div id="submitlyrics-tab" class="panel tab-panel" tabindex="2">
+								if props.PageId != SubmitLyricsPage {
+									Woah slow down sparky!
+								} else {
+									@content
+								}
+							</div>
+							<input
+								class="radiotab"
+								tabindex="3"
+								name="tabs"
+								type="radio"
+								id="about"
+								hx-get="/tab/about"
+								hx-target="#about-tab"
+								hx-swap="innerHTML"
+								hx-trigger="click"
+								if props.PageId == AboutPage {
+									checked="checked"
+								}
+								_="on click js window.history.replaceState(null, document.title, `${window.location.protocol}//${window.location.host}/about`)"
+							/>
+							<label class="label" for="about">About</label>
+							<div id="about-tab" class="panel tab-panel" tabindex="3">
+								if props.PageId != AboutPage {
+									Woah slow down sparky!
+								} else {
+									@content
+								}
+							</div>
+						</div>
+					</div>
+				</section>
+			</main>
+			<hr class="cs-hr"/>
+			@footer()
+			<script>console.log("helloooo 👋");</script>
+		</body>
+	</html>
+}

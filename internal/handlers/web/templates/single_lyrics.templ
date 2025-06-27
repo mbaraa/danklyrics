@@ -1,0 +1,26 @@
+package templates
+
+import "github.com/mbaraa/danklyrics/pkg/models"
+
+templ SingleLyrics(lyrics models.Lyrics) {
+	<section style="user-select: text;">
+		if lyrics.SongName == "" {
+			No lyrics was found!
+		} else {
+			<h2>{ lyrics.SongName }</h2>
+			<h3>
+				{ lyrics.ArtistName }
+				if lyrics.AlbumName != "" {
+					- { lyrics.AlbumName }
+				}
+			</h3>
+			<hr class="cs-hr"/>
+			<p class="lyrics-container" style="margin-top: 15px;">
+				for _, part := range lyrics.Parts {
+					<span>{ part }</span>
+					<br/>
+				}
+			</p>
+		}
+	</section>
+}

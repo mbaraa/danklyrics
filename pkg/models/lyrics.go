@@ -4,6 +4,7 @@ import "strings"
 
 // Lyrics holds lyrics fetched by a provider.
 type Lyrics struct {
+	PublicId   string `json:"-"`
 	SongName   string `json:"song_name"`
 	ArtistName string `json:"artist_name,omitempty"`
 	AlbumName  string `json:"album_name,omitempty"`

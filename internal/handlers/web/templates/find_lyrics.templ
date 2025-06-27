@@ -1,0 +1,127 @@
+package templates
+
+templ FindLyrics() {
+	<h2 class="dank-form-title">Find ze lyrics</h2>
+	<form
+		action="#"
+		id="dank-form"
+		class="dank-form"
+		_="def findLyrics(song, artist, album)
+    set loadingMsgs to ['Wait','Loading','Finding lyrics','Doing the thing','Crunching the numbers','Loading terrain','Just wait','AAAAAAAAAAAAAAAA','Ring dingdong','Ring ding ding ding dingdong'] then
+
+    fetch `/api/lyrics?song=${song}&artist=${artist}&album=${album}`
+    as text
+    then put the result into #lyrics-tab.innerHTML
+
+    put loadingMsgs[Math.floor(Math.random() * loadingMsgs.length)] into #dank-lyrics-content.innerText
+
+    call #lyrics.click()
+
+    set apiLink to `https://api.danklyrics.com/lyrics?` then
+    set dankApiLink to `https://api.danklyrics.com/dank/lyrics?` then
+    set searchQuery to `song=${encodeURIComponent(song)}` then
+    if artist then
+      append `&artist=${encodeURIComponent(artist)}` to searchQuery
+    end
+    if album then
+      append `&album=${encodeURIComponent(album)}` to searchQuery
+    end
+
+    put `<ul><li>Dank API: <code style='user-select: all;'>${dankApiLink + searchQuery}</code></li>`
+    into #api-endpoint's innerHTML
+
+    append `<li>Providers API: <code style='user-select: all;'>${apiLink + searchQuery}&providers=dank&providers=lrc</code></li></ul>`
+    to #api-endpoint's innerHTML
+
+    call window.history.replaceState(null, document.title, `${window.location.protocol}//${window.location.host}?${searchQuery}`)
+end
+init
+    make a URL from document.location called url then
+    set queryParams to url.searchParams then
+    set song to queryParams.get('song') then
+    set artist to queryParams.get('artist') then
+    set album to queryParams.get('album') then
+
+    if not song
+        exit
+    end
+    if not song and not artist and not album
+        exit
+    end
+    if not artist
+        put '' into artist
+    end
+    if not album
+        put '' into album
+    end
+
+    call findLyrics(song, artist, album)
+end
+on submit
+    halt the event
+    set song to event.target['song_name'].value then
+    set artist to event.target['artist_name'].value then
+    set album to event.target['album_name'].value then
+
+    call findLyrics(song, artist, album)
+end
+on fetch:error
+    put 'Something went wrong!' into #dank-lyrics-content.innerText then
+    alert('Something went wrong!')
+end
+        "
+	>
+		<input
+			class="cs-input dank-song-name"
+			id="song_name"
+			type="text"
+			required
+			placeholder="Song name"
+			autofocus
+		/>
+		<div class="artist-album-container">
+			<input
+				class="cs-input dank-artist-name"
+				id="artist_name"
+				type="text"
+				placeholder="Artist name (optional)"
+			/>
+			<input
+				class="cs-input dank-album-name"
+				id="album_name"
+				type="text"
+				placeholder="Album name (optional)"
+			/>
+		</div>
+		<input
+			class="cs-btn dank-form-button"
+			type="submit"
+			value="Find"
+		/>
+		<div class="cs-tabs">
+			<input
+				class="radiotab"
+				tabindex="1"
+				name="tabs"
+				type="radio"
+				id="api-tab"
+				checked="checked"
+			/>
+			<label class="label" for="api-tab">API</label>
+			<div class="panel tab-panel" tabindex="1">
+				<h2>API Endpoint for this search</h2>
+				<p>
+					API docs
+					<a
+						target="_blank"
+						href="https://github.com/mbaraa/danklyrics"
+					>here</a>.
+				</p>
+				<div id="api-endpoint">Make a search first, lol.</div>
+			</div>
+			<div class="panel tab-panel">
+				<p id="dank-lyrics-content">Such empty...</p>
+			</div>
+		</div>
+	</form>
+}

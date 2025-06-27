@@ -1,21 +1,20 @@
 package client
 
 import (
-	"github.com/mbaraa/danklyrics/pkg/models"
-	"github.com/mbaraa/danklyrics/pkg/provider"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/mbaraa/danklyrics/pkg/models"
+	"github.com/mbaraa/danklyrics/pkg/provider"
 )
 
 // Http is the dank lyrics finding client that makes a call to api.danklyrics.com to find the lyrics.
 type Http struct {
-	providers          string
-	apiAddress         string
-	geniusClientId     string
-	geniusClientSecret string
+	providers  string
+	apiAddress string
 }
 
 func NewHttp(c Config) (*Http, error) {
@@ -36,10 +35,8 @@ func NewHttp(c Config) (*Http, error) {
 	}
 
 	return &Http{
-		providers:          providersStr,
-		apiAddress:         c.ApiAddress,
-		geniusClientId:     c.GeniusClientId,
-		geniusClientSecret: c.GeniusClientSecret,
+		providers:  providersStr,
+		apiAddress: c.ApiAddress,
 	}, nil
 }
 
@@ -51,8 +48,8 @@ func (c *Http) GetSongLyrics(s provider.SearchParams) (models.Lyrics, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
-			"%s/lyrics?%s&genius_client_id=%s&genius_client_secret=%s&song=%s&artist=%s&album=%s",
-			c.apiAddress, c.providers, url.QueryEscape(c.geniusClientId), url.QueryEscape(c.geniusClientSecret), url.QueryEscape(s.SongName), url.QueryEscape(s.ArtistName), url.QueryEscape(s.AlbumName),
+			"%s/lyrics?%s&song=%s&artist=%s&album=%s",
+			c.apiAddress, c.providers, url.QueryEscape(s.SongName), url.QueryEscape(s.ArtistName), url.QueryEscape(s.AlbumName),
 		),
 		http.NoBody)
 	if err != nil {

@@ -1,4 +1,4 @@
-package handlers
+package api
 
 const docsLink = "https://github.com/mbaraa/danklyrics"
 

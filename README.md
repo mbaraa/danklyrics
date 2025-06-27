@@ -32,7 +32,7 @@ import (
 
 func main() {
 	lyricser, err := client.NewHttp(client.Config{
-        // available providers are the following in addition to Genius, and you need to provide client id and token to use it.
+        // available providers are the following.
 		Providers: []provider.Name{provider.Dank, provider.LyricFind},
 	})
 	if err != nil {
@@ -40,7 +40,7 @@ func main() {
 	}
 
 	searchInput := provider.SearchParams{
-		SongName: "sos",
+        SongName: "sos",
         ArtistName: "abba",
 	}
     lyrics, err := lyricser.GetSongLyrics(searchInput)
@@ -85,14 +85,12 @@ _Finds lyrics for a song using the specified providers_
 
 Query parameters
 
-| name                   | required              | description                                                                        |
-| ---------------------- | --------------------- | ---------------------------------------------------------------------------------- |
-| `providers`            | required (at least 1) | to specify which lyrics provider(s) to use, list is fetched from `GET /providers`. |
-| `genius_client_id`     | conditional           | to set genius' client id when `genius` is used as a provider.                      |
-| `genius_client_secret` | conditional           | same as `genius_client_id` but for client secret.                                  |
-| `song`                 | required              | song's name to search for.                                                         |
-| `artist`               | optional              | artist's name to search for, if the song's name isn't enough.                      |
-| `album`                | optional              | album's name to search for, if the song's name isn't enough.                       |
+| name        | required              | description                                                                        |
+| ----------- | --------------------- | ---------------------------------------------------------------------------------- |
+| `providers` | required (at least 1) | to specify which lyrics provider(s) to use, list is fetched from `GET /providers`. |
+| `song`      | required              | song's name to search for.                                                         |
+| `artist`    | optional              | artist's name to search for, if the song's name isn't enough.                      |
+| `album`     | optional              | album's name to search for, if the song's name isn't enough.                       |
 
 ```json
 {

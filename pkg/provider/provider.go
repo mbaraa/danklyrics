@@ -23,8 +23,6 @@ type Name string
 const (
 	// Dank pass this to [GetSongLyrics] to use DankLyrics as a lyrics provider.
 	Dank Name = "dank"
-	// Genius pass this to [GetSongLyrics] to use Genius as a lyrics provider.
-	Genius Name = "genius"
 	// LyricFind pass this to [GetSongLyrics] to use LyricFind as a lyrics provider.
 	LyricFind Name = "lrc"
 )
