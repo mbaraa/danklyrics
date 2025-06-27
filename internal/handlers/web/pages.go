@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"text/template"
 
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/internal/handlers/web/templates"
@@ -15,6 +16,9 @@ import (
 
 	"github.com/a-h/templ"
 )
+
+//go:embed sitemap_template.xml
+var sitemapTemplate embed.FS
 
 var publicFiles embed.FS
 
@@ -184,14 +188,21 @@ func (p *pages) HandleLyrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *pages) HandleSitemap(w http.ResponseWriter, r *http.Request) {
-	sitemapFile, err := p.usecases.GetSitemap()
+	sitemapEntries, err := makeApiGetRequest[[]actions.SitemapUrl]("/sitemap-kurwa", "")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	// w.Header().Set("Cache-Control", "max-age=300")
 	w.Header().Set("Content-Type", "application/xml")
-	_, _ = io.Copy(w, sitemapFile)
+
+	t := template.Must(template.ParseFS(sitemapTemplate, "sitemap_template.xml"))
+	err = t.Execute(w, sitemapEntries)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p *pages) HandleRobots(w http.ResponseWriter, r *http.Request) {

@@ -44,11 +44,6 @@ func init() {
 	jwtUtil := jwt.New[actions.TokenPayload]()
 	sm := sitemap.New()
 	usecases = actions.New(repo, mailUtil, jwtUtil, sm)
-
-	err = usecases.LoadLyricsPublicIds()
-	if err != nil {
-		panic(err)
-	}
 }
 
 func main() {

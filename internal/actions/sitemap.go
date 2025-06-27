@@ -1,16 +1,9 @@
 package actions
 
 import (
-	"bytes"
-	"embed"
-	"io"
 	"log"
-	"text/template"
 	"time"
 )
-
-//go:embed sitemap_template.xml
-var sitemapTemplate embed.FS
 
 type Sitemap interface {
 	GetLyricsEntries() ([]SitemapUrl, error)
@@ -19,8 +12,8 @@ type Sitemap interface {
 }
 
 type SitemapUrl struct {
-	PublicId string
-	AddedAt  string
+	PublicId string `json:"public_id"`
+	AddedAt  string `json:"added_at"`
 }
 
 func (a *Actions) LoadLyricsPublicIds() error {
@@ -47,19 +40,11 @@ func (a *Actions) LoadLyricsPublicIds() error {
 	return nil
 }
 
-func (a *Actions) GetSitemap() (io.Reader, error) {
+func (a *Actions) GetSitemap() ([]SitemapUrl, error) {
 	sitemapEntries, err := a.sitemap.GetLyricsEntries()
 	if err != nil {
 		return nil, err
 	}
 
-	buf := bytes.NewBuffer(nil)
-
-	t := template.Must(template.ParseFS(sitemapTemplate, "sitemap_template.xml"))
-	err = t.Execute(buf, sitemapEntries)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return sitemapEntries, nil
 }

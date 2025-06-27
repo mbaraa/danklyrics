@@ -32,6 +32,11 @@ func init() {
 	jwtUtil := jwt.New[actions.TokenPayload]()
 	sm := sitemap.New()
 	usecases = actions.New(repo, mailUtil, jwtUtil, sm)
+
+	err = usecases.LoadLyricsPublicIds()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
@@ -40,6 +45,7 @@ func main() {
 	lyricsApi := api.NewLyricsFinderApi(usecases)
 	dankLyricsApi := api.NewDankLyricsApi(usecases)
 	authApi := api.NewAuthApi(usecases)
+	sitemapApi := api.NewSitemapApi(usecases)
 
 	apiHandler.HandleFunc("/", lyricsApi.HandleIndex)
 	apiHandler.HandleFunc("GET /providers", lyricsApi.HandleListProviders)
@@ -48,6 +54,7 @@ func main() {
 	apiHandler.HandleFunc("GET /dank/lyrics", dankLyricsApi.HandleGetSongLyrics)
 	apiHandler.HandleFunc("POST /auth", authApi.HandleAuth)
 	apiHandler.HandleFunc("POST /auth/confirm", authApi.HandleConfirmAuth)
+	apiHandler.HandleFunc("GET /sitemap-kurwa", sitemapApi.HandleGetSitemapEntries)
 
 	log.Printf("Starting web server at port %s", config.Env().ApiPort)
 	log.Fatalln(http.ListenAndServe(":"+config.Env().ApiPort, apiHandler))
