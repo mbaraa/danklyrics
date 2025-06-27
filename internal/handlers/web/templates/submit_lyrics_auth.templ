@@ -12,6 +12,13 @@ templ SubmitLyricsAuth() {
 			hx-target="#dank-lyrics-auth-content"
 			hx-swap="innerHTML"
 			hx-trigger="submit"
+			_="on htmx:afterRequest
+    put 'Done, check your inbox...' into #dank-lyrics-auth-content
+end
+on htmx:error
+    put 'Something went wrong!' into #dank-lyrics-auth-content then
+    alert 'Something went wrong!'
+end"
 		>
 			<input
 				class="cs-input dank-email"

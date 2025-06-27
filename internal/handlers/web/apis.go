@@ -117,7 +117,7 @@ func (a *api) HandleConfirmAuthSubmitLyrics(w http.ResponseWriter, r *http.Reque
 		Expires: time.Now().UTC().Add(time.Hour),
 	})
 
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/lyrics/submit", http.StatusTemporaryRedirect)
 }
 
 func (a *api) HandleSubmitLyrics(w http.ResponseWriter, r *http.Request) {

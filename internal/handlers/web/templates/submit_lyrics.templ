@@ -6,17 +6,32 @@ templ SubmitLyrics() {
 		action="#"
 		id="dank-submit-form"
 		class="dank-form"
+		hx-ext="json-enc"
+		hx-post="/api/lyrics"
+		hx-target="#dank-lyrics-submit-content"
+		hx-swap="innerHTML"
+		hx-trigger="submit"
+		_="on htmx:afterRequest
+    put 'Done, you`ll receive an email when the lyrics is approved!' into #dank-lyrics-submit-content then
+    reset() me
+end
+on htmx:error
+    put 'Something went wrong!' into #dank-lyrics-submit-content then
+    alert 'Something went wrong!'
+end"
 	>
 		<div class="artist-album-container">
 			<input
 				class="cs-input dank-song-name"
 				id="songName"
+				name="song_name"
 				type="text"
 				placeholder="Song name"
 				required
 			/>
 			<input
 				class="cs-input dank-artist-name"
+				name="artist_name"
 				id="artistName"
 				type="text"
 				placeholder="Artist name"
@@ -24,6 +39,7 @@ templ SubmitLyrics() {
 			/>
 			<input
 				class="cs-input dank-album-name"
+				name="album_name"
 				id="albumName"
 				type="text"
 				placeholder="Album name"
@@ -32,6 +48,7 @@ templ SubmitLyrics() {
 		</div>
 		<textarea
 			class="cs-input dank-lyrics"
+			name="plain_lyrics"
 			id="lyrics"
 			type="input"
 			rows="20"
