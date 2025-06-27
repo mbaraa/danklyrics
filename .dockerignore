@@ -11,6 +11,5 @@ tmp/
 Session.vim
 .db
 *_templ.go
-*.txt
 website/admin/htmx/*.js
 website/user/htmx/*.js
