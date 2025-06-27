@@ -32,7 +32,7 @@ main {
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   padding: 0;
   margin: 0;
@@ -42,14 +42,20 @@ main {
 
 @media screen and (min-width: 768px) {
   .title {
-    font-size: 6rem;
+    font-size: 4rem;
   }
 }
 
 @media screen and (min-width: 1300px) {
   .title {
-    font-size: 10rem;
-    height: 200px;
+    font-size: 8rem;
+    height: 150px;
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  .lyrics-container {
+    font-size: 1.4rem;
   }
 }
 

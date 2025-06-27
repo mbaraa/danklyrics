@@ -22,37 +22,6 @@ type Lyrics struct {
 	UpdatedAt time.Time `gorm:"index"`
 }
 
-func (l *Lyrics) AfterFind(tx *gorm.DB) error {
-	parts := make([]LyricsPart, 0)
-	err := tx.
-		Model(new(LyricsPart)).
-		Where("lyrics_id = ?", l.Id).
-		Find(&parts).
-		Error
-	if err != nil {
-		return err
-	}
-
-	l.LyricsPlain = make([]string, 0, len(parts))
-	for _, part := range parts {
-		l.LyricsPlain = append(l.LyricsPlain, part.Text)
-	}
-
-	synced := make([]LyricsSyncedPart, 0)
-	_ = tx.
-		Model(new(LyricsSyncedPart)).
-		Where("lyrics_id = ?", l.Id).
-		Find(&synced).
-		Error
-
-	l.LyricsSynced = make(map[string]string, 0)
-	for _, part := range synced {
-		l.LyricsSynced[part.Time] = part.Text
-	}
-
-	return nil
-}
-
 func (l *Lyrics) AfterDelete(tx *gorm.DB) error {
 	err := tx.
 		Exec("DELETE FROM lyrics_parts WHERE lyrics_id = ?", l.Id).

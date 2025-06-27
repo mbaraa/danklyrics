@@ -25,11 +25,7 @@ func New() (*repository, error) {
 }
 
 func (r *repository) CreateLyrics(lyrics models.Lyrics) (models.Lyrics, error) {
-	if lyrics.AlbumTitle != "" {
-		lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s-%s", lyrics.ArtistName, lyrics.AlbumTitle, lyrics.SongTitle))
-	} else {
-		lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s", lyrics.ArtistName, lyrics.SongTitle))
-	}
+	lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s", lyrics.ArtistName, lyrics.SongTitle))
 
 	err := tryWrapDbError(
 		r.client.
@@ -42,6 +38,37 @@ func (r *repository) CreateLyrics(lyrics models.Lyrics) (models.Lyrics, error) {
 	}
 
 	return lyrics, nil
+}
+
+func (r *repository) getLyricsParts(lyricsId uint) (plain []string, synced map[string]string, err error) {
+	parts := make([]models.LyricsPart, 0)
+	err = r.client.
+		Model(new(models.LyricsPart)).
+		Where("lyrics_id = ?", lyricsId).
+		Find(&parts).
+		Error
+	if err != nil {
+		return nil, nil, err
+	}
+
+	plain = make([]string, 0, len(parts))
+	for _, part := range parts {
+		plain = append(plain, part.Text)
+	}
+
+	syncedParts := make([]models.LyricsSyncedPart, 0)
+	_ = r.client.
+		Model(new(models.LyricsSyncedPart)).
+		Where("lyrics_id = ?", lyricsId).
+		Find(&syncedParts).
+		Error
+
+	synced = make(map[string]string, 0)
+	for _, part := range syncedParts {
+		synced[part.Time] = part.Text
+	}
+
+	return
 }
 
 func (r *repository) GetLyricsByPublicId(id string) (models.Lyrics, error) {
@@ -57,6 +84,13 @@ func (r *repository) GetLyricsByPublicId(id string) (models.Lyrics, error) {
 		return models.Lyrics{}, err
 	}
 
+	parts, synced, err := r.getLyricsParts(lyrics.Id)
+	if err != nil {
+		return models.Lyrics{}, err
+	}
+	lyrics.LyricsPlain = parts
+	lyrics.LyricsSynced = synced
+
 	return lyrics, nil
 }
 
@@ -71,6 +105,15 @@ func (r *repository) GetLyricsBySongTitle(title string) ([]models.Lyrics, error)
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	for i := range lyricses {
+		parts, synced, err := r.getLyricsParts(lyricses[i].Id)
+		if err != nil {
+			return nil, err
+		}
+		lyricses[i].LyricsPlain = parts
+		lyricses[i].LyricsSynced = synced
 	}
 
 	return lyricses, nil
@@ -89,6 +132,15 @@ func (r *repository) GetLyricsBySongTitleAndArtistName(songTitle, artistName str
 		return nil, err
 	}
 
+	for i := range lyricses {
+		parts, synced, err := r.getLyricsParts(lyricses[i].Id)
+		if err != nil {
+			return nil, err
+		}
+		lyricses[i].LyricsPlain = parts
+		lyricses[i].LyricsSynced = synced
+	}
+
 	return lyricses, nil
 }
 
@@ -105,6 +157,15 @@ func (r *repository) GetLyricsBySongAndAlbumTitle(songTitle, albumTitle string) 
 		return nil, err
 	}
 
+	for i := range lyricses {
+		parts, synced, err := r.getLyricsParts(lyricses[i].Id)
+		if err != nil {
+			return nil, err
+		}
+		lyricses[i].LyricsPlain = parts
+		lyricses[i].LyricsSynced = synced
+	}
+
 	return lyricses, nil
 }
 
@@ -115,6 +176,31 @@ func (r *repository) GetLyricsBySongTitleArtistNameAndAlbumTitle(songTitle, arti
 		r.client.
 			Model(new(models.Lyrics)).
 			Find(&lyricses, "LOWER(song_title) LIKE LOWER(?) AND LOWER(artist_name) LIKE LOWER(?) AND LOWER(album_title) LIKE LOWER(?)", likeArg(songTitle), likeArg(artistName), likeArg(albumTitle)).
+			Error,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range lyricses {
+		parts, synced, err := r.getLyricsParts(lyricses[i].Id)
+		if err != nil {
+			return nil, err
+		}
+		lyricses[i].LyricsPlain = parts
+		lyricses[i].LyricsSynced = synced
+	}
+
+	return lyricses, nil
+}
+
+func (r *repository) GetLyricses(page int) ([]models.Lyrics, error) {
+	lyricses := make([]models.Lyrics, 0)
+
+	err := tryWrapDbError(
+		r.client.
+			Model(new(models.Lyrics)).
+			Find(&lyricses).
 			Error,
 	)
 	if err != nil {

@@ -14,6 +14,7 @@ func (a *Actions) GetLyricsByPublicId(id string) (models.Lyrics, error) {
 	}
 
 	return models.Lyrics{
+		PublicId:   intLyrics.PublicId,
 		SongName:   intLyrics.SongTitle,
 		ArtistName: intLyrics.ArtistName,
 		AlbumName:  intLyrics.AlbumTitle,

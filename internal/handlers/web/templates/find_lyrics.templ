@@ -6,8 +6,7 @@ templ FindLyrics() {
 		action="#"
 		id="dank-form"
 		class="dank-form"
-		_="
-def findLyrics(song, artist, album)
+		_="def findLyrics(song, artist, album)
     set loadingMsgs to ['Wait','Loading','Finding lyrics','Doing the thing','Crunching the numbers','Loading terrain','Just wait','AAAAAAAAAAAAAAAA','Ring dingdong','Ring ding ding ding dingdong'] then
 
     fetch `/api/lyrics?song=${song}&artist=${artist}&album=${album}`
@@ -33,6 +32,8 @@ def findLyrics(song, artist, album)
 
     append `<li>Providers API: <code style='user-select: all;'>${apiLink + searchQuery}&providers=dank&providers=lrc</code></li></ul>`
     to #api-endpoint's innerHTML
+
+    call window.history.replaceState(null, document.title, `${window.location.protocol}//${window.location.host}?${searchQuery}`)
 end
 init
     make a URL from document.location called url then
@@ -53,7 +54,6 @@ init
     if not album
         put '' into album
     end
-    console.log(url.searchParams, song, artist, album)
 
     call findLyrics(song, artist, album)
 end
@@ -67,7 +67,7 @@ on submit
 end
 on fetch:error
     put 'Something went wrong!' into #dank-lyrics-content.innerText then
-    alert 'Something went wrong!'
+    alert('Something went wrong!')
 end
         "
 	>

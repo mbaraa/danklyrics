@@ -59,11 +59,7 @@ func Migrate() error {
 	})
 
 	for _, lyrics := range l {
-		if lyrics.AlbumTitle != "" {
-			lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s-%s", lyrics.ArtistName, lyrics.AlbumTitle, lyrics.SongTitle))
-		} else {
-			lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s", lyrics.ArtistName, lyrics.SongTitle))
-		}
+		lyrics.PublicId = actions.Slugify(fmt.Sprintf("%s-%s", lyrics.ArtistName, lyrics.SongTitle))
 		duplicatesCount[lyrics.PublicId] = struct {
 			count int
 			ids   []uint

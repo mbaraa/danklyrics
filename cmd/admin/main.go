@@ -10,6 +10,7 @@ import (
 	"github.com/mbaraa/danklyrics/internal/jwt"
 	"github.com/mbaraa/danklyrics/internal/mailer"
 	"github.com/mbaraa/danklyrics/internal/mariadb"
+	"github.com/mbaraa/danklyrics/internal/sitemap"
 )
 
 var (
@@ -29,7 +30,8 @@ func init() {
 
 	mailUtil := mailer.New()
 	jwtUtil := jwt.New[actions.TokenPayload]()
-	usecases = actions.New(repo, mailUtil, jwtUtil)
+	sm := sitemap.New()
+	usecases = actions.New(repo, mailUtil, jwtUtil, sm)
 }
 
 func main() {

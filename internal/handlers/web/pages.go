@@ -2,6 +2,7 @@ package web
 
 import (
 	"embed"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -154,7 +155,6 @@ func (p *pages) HandleLyrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	lyricsSlug := r.PathValue("id")
-
 	lyrics, err := p.usecases.GetLyricsByPublicId(lyricsSlug)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -165,11 +165,16 @@ func (p *pages) HandleLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = lyrics
-
 	err = templates.Layout(templates.PageProps{
-		PageId: templates.LyricsPage,
-		Title:  "todo",
+		PageId:      templates.LyricsPage,
+		Title:       fmt.Sprintf("%s - %s", lyrics.ArtistName, lyrics.SongName),
+		Description: fmt.Sprintf("%s by %s from the album %s", lyrics.SongName, lyrics.ArtistName, lyrics.AlbumName),
+		Url:         "https://danklyrics.com/lyrics/" + lyrics.PublicId,
+		Audio: templates.AudioProps{
+			Album:     lyrics.AlbumName,
+			Musician:  lyrics.ArtistName,
+			SongTitle: lyrics.SongName,
+		},
 	}, templates.SingleLyrics(lyrics)).Render(r.Context(), w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -179,7 +184,12 @@ func (p *pages) HandleLyrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *pages) HandleSitemap(w http.ResponseWriter, r *http.Request) {
-	sitemapFile, _ := publicFiles.Open("sitemap.xml")
+	sitemapFile, err := p.usecases.GetSitemap()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/xml")
 	_, _ = io.Copy(w, sitemapFile)
 }

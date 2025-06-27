@@ -11,6 +11,7 @@ import (
 	"github.com/mbaraa/danklyrics/internal/jwt"
 	"github.com/mbaraa/danklyrics/internal/mailer"
 	"github.com/mbaraa/danklyrics/internal/mariadb"
+	"github.com/mbaraa/danklyrics/internal/sitemap"
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/html"
@@ -41,7 +42,13 @@ func init() {
 
 	mailUtil := mailer.New()
 	jwtUtil := jwt.New[actions.TokenPayload]()
-	usecases = actions.New(repo, mailUtil, jwtUtil)
+	sm := sitemap.New()
+	usecases = actions.New(repo, mailUtil, jwtUtil, sm)
+
+	err = usecases.LoadLyricsPublicIds()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {

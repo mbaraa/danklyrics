@@ -10,6 +10,8 @@ type Repository interface {
 	GetLyricsBySongAndAlbumTitle(songTitle, albumTitle string) ([]models.Lyrics, error)
 	GetLyricsBySongTitleArtistNameAndAlbumTitle(songTitle, artistName, albumTitle string) ([]models.Lyrics, error)
 
+	GetLyricses(page int) ([]models.Lyrics, error)
+
 	CreateLyricsRequest(l models.LyricsRequest) (models.LyricsRequest, error)
 	DeleteLyricsRequest(id uint) error
 	GetLyricsRequestById(id uint) (models.LyricsRequest, error)
