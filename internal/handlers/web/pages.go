@@ -171,7 +171,7 @@ func (p *pages) HandleLyrics(w http.ResponseWriter, r *http.Request) {
 
 	err = templates.Layout(templates.PageProps{
 		PageId:      templates.LyricsPage,
-		Title:       fmt.Sprintf("%s - %s", lyrics.ArtistName, lyrics.SongName),
+		Title:       fmt.Sprintf("%s, %s Lyrics", lyrics.ArtistName, lyrics.SongName),
 		Description: fmt.Sprintf("%s by %s from the album %s", lyrics.SongName, lyrics.ArtistName, lyrics.AlbumName),
 		Url:         "https://danklyrics.com/lyrics/" + lyrics.PublicId,
 		Audio: templates.AudioProps{

@@ -13,5 +13,5 @@ Session.vim
 website/admin/htmx/*.js
 website/user/htmx/*.js
 *_templ.go
-*.txt
+*_templ.txt
 
