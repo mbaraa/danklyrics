@@ -48,8 +48,8 @@ func (c *Http) GetSongLyrics(s provider.SearchParams) (models.Lyrics, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
-			"%s/lyrics?%s&song=%s&artist=%s&album=%s",
-			c.apiAddress, c.providers, url.QueryEscape(s.SongName), url.QueryEscape(s.ArtistName), url.QueryEscape(s.AlbumName),
+			"%s/lyrics?%s&q=%s&song=%s&artist=%s&album=%s",
+			c.apiAddress, c.providers, url.QueryEscape(s.Query), url.QueryEscape(s.SongName), url.QueryEscape(s.ArtistName), url.QueryEscape(s.AlbumName),
 		),
 		http.NoBody)
 	if err != nil {

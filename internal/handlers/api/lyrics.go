@@ -37,6 +37,7 @@ func (l *lyricsFinderApi) HandleListProviders(w http.ResponseWriter, r *http.Req
 func (l *lyricsFinderApi) HandleGetSongLyrics(w http.ResponseWriter, r *http.Request) {
 	providers := r.URL.Query()["providers"]
 
+	searchQuery, okSearchQuery := r.URL.Query()["q"]
 	artistName, okArtist := r.URL.Query()["artist"]
 	albumName, okAlbum := r.URL.Query()["album"]
 	songName, okSong := r.URL.Query()["song"]
@@ -53,32 +54,36 @@ func (l *lyricsFinderApi) HandleGetSongLyrics(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if !okArtist && !okAlbum && !okSong {
+	if !okArtist && !okAlbum && !okSong && !okSearchQuery {
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(errorResponse{
-			Message:  "Missing all query parameters `artist`, `album` and `song`",
+			Message:  "Missing all query parameters `artist`, `album` and `song` or just `q`",
 			DocsLink: docsLink,
 		})
 		return
 	}
 
-	if !okSong {
+	if !okSong && !okSearchQuery {
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(errorResponse{
-			Message:  "Missing required query parameter `song`",
+			Message:  "Missing required query parameter `song` or `q`",
 			DocsLink: docsLink,
 		})
 		return
 	}
 
-	searchInput := provider.SearchParams{
-		SongName: songName[0],
+	searchInput := provider.SearchParams{}
+	if okSong {
+		searchInput.SongName = songName[0]
 	}
 	if okAlbum {
 		searchInput.AlbumName = albumName[0]
 	}
 	if okArtist {
 		searchInput.ArtistName = artistName[0]
+	}
+	if okSearchQuery {
+		searchInput.Query = searchQuery[0]
 	}
 
 	providersConfig := make([]provider.Name, 0, len(providers))

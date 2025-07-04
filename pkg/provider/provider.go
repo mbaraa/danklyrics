@@ -7,6 +7,7 @@ type SearchParams struct {
 	SongName   string
 	ArtistName string
 	AlbumName  string
+	Query      string
 }
 
 // Service fetches lyrics for the given song in the search params.

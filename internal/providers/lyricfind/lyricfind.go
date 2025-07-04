@@ -1,9 +1,10 @@
 package lyricfind
 
 import (
+	"errors"
+
 	"github.com/mbaraa/danklyrics/pkg/models"
 	"github.com/mbaraa/danklyrics/pkg/provider"
-	"errors"
 
 	"github.com/mbaraa/lrclibgo"
 )
@@ -19,11 +20,16 @@ func New() provider.Service {
 }
 
 func (l *lyricFindProvider) GetSongLyrics(s provider.SearchParams) (models.Lyrics, error) {
-	lrcSearch := lrclibgo.SearchParams{
-		TrackName:  s.SongName,
-		ArtistName: s.ArtistName,
-		AlbumName:  s.AlbumName,
-		Limit:      0,
+	var lrcSearch lrclibgo.SearchParams
+	if s.Query != "" {
+		lrcSearch.Query = s.Query
+	} else {
+		lrcSearch = lrclibgo.SearchParams{
+			TrackName:  s.SongName,
+			ArtistName: s.ArtistName,
+			AlbumName:  s.AlbumName,
+			Limit:      0,
+		}
 	}
 
 	hits, err := l.client.Search.Get(lrcSearch)
