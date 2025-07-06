@@ -2,13 +2,16 @@ package api
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/mbaraa/danklyrics/internal/actions"
 	"github.com/mbaraa/danklyrics/pkg/client"
 	"github.com/mbaraa/danklyrics/pkg/models"
 	"github.com/mbaraa/danklyrics/pkg/provider"
+	website "github.com/mbaraa/danklyrics/website/user"
 )
 
 type lyricsFinderApi struct {
@@ -22,6 +25,17 @@ func NewLyricsFinderApi(usecases *actions.Actions) *lyricsFinderApi {
 }
 
 func (l *lyricsFinderApi) HandleIndex(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, "favicon.ico") {
+		f, err := website.FS().Open("favicon.ico")
+		if err != nil {
+			return
+		}
+
+		w.Header().Set("Content-Type", "image/x-icon")
+		io.Copy(w, f)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte("refer to (" + docsLink + ") for API docs!"))
 }

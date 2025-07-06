@@ -41,6 +41,16 @@ func (p *pages) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusTemporaryRedirect)
 		return
 	}
+	if strings.HasSuffix(r.URL.Path, "favicon.ico") {
+		f, err := publicFiles.Open("favicon.ico")
+		if err != nil {
+			return
+		}
+
+		w.Header().Set("Content-Type", "image/x-icon")
+		io.Copy(w, f)
+		return
+	}
 
 	w.Header().Set("Content-Type", "text/html")
 	err := templates.Layout(templates.PageProps{
